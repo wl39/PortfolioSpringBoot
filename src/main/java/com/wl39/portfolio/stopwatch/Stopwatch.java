@@ -3,6 +3,7 @@ package com.wl39.portfolio.stopwatch;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 
 @Entity
 @Table
@@ -20,6 +21,16 @@ public class Stopwatch {
     private Character type;
     @Transient
     private String time;
+    @Transient
+    private Long minAgo;
+    @Transient
+    private Long hourAgo;
+    @Transient
+    private Long dayAgo;
+    @Transient
+    private Long monthAgo;
+    @Transient
+    private Long yearAgo;
 
     public Stopwatch() {
 
@@ -90,7 +101,15 @@ public class Stopwatch {
     }
 
     public String getTime() {
-        return time;
+        long hours = elapsedTime / 360000;
+        long minutes = (elapsedTime / 6000) % 60;
+        long seconds = (elapsedTime / 100) % 60;
+
+        return hours +
+                ":" +
+                minutes +
+                ":" +
+                seconds;
     }
 
     public void setTime(String time) {
@@ -103,5 +122,45 @@ public class Stopwatch {
 
     public void setType(Character type) {
         this.type = type;
+    }
+
+    public Long getMinAgo() {
+        return ChronoUnit.MINUTES.between(this.generatedDate, LocalDateTime.now());
+    }
+
+    public void setMinAgo(Long minAgo) {
+        this.minAgo = minAgo;
+    }
+
+    public Long getHourAgo() {
+        return ChronoUnit.HOURS.between(this.generatedDate, LocalDateTime.now());
+    }
+
+    public void setHourAgo(Long hourAgo) {
+        this.hourAgo = hourAgo;
+    }
+
+    public Long getDayAgo() {
+        return ChronoUnit.DAYS.between(this.generatedDate, LocalDateTime.now());
+    }
+
+    public void setDayAgo(Long dayAgo) {
+        this.dayAgo = dayAgo;
+    }
+
+    public Long getMonthAgo() {
+        return ChronoUnit.MONTHS.between(this.generatedDate, LocalDateTime.now());
+    }
+
+    public void setMonthAgo(Long monthAgo) {
+        this.monthAgo = monthAgo;
+    }
+
+    public Long getYearAgo() {
+        return ChronoUnit.YEARS.between(this.generatedDate, LocalDateTime.now());
+    }
+
+    public void setYearAgo(Long yearAgo) {
+        this.dayAgo = yearAgo;
     }
 }

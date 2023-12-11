@@ -1,6 +1,9 @@
 package com.wl39.portfolio.stopwatch;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,10 +20,12 @@ public class StopwatchController {
     }
 
     @GetMapping
-    public List<Stopwatch> getAllStopwatches() {
-        return this.stopwatchService.getAllStopwatches();
+//    public List<Stopwatch> getAllStopwatches() {
+//        return this.stopwatchService.getAllStopwatches();
+//    }
+    public Page<Stopwatch> getAllStopwatchesPage(Pageable pageable) {
+        return this.stopwatchService.getStopwatchesPage(pageable);
     }
-
     @PostMapping
     public Long uploadStopwatch(@RequestBody Stopwatch stopwatch) {
         this.stopwatchService.uploadStopwatch(stopwatch);

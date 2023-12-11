@@ -1,6 +1,9 @@
 package com.wl39.portfolio.stopwatch;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,6 +20,11 @@ public class StopwatchService {
 
     public List<Stopwatch> getAllStopwatches() {
         return this.stopwatchRepository.findAll();
+    }
+
+    public Page<Stopwatch> getStopwatchesPage(Pageable pageable) {
+//        Page<Stopwatch> stopwatches = stopwatchRepository.findAll(pageable);
+        return stopwatchRepository.findAll(pageable);
     }
 
     public void uploadStopwatch(Stopwatch stopwatch) {
