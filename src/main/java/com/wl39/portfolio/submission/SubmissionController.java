@@ -23,6 +23,11 @@ public class SubmissionController {
         return this.submissionService.findByStudentName(studentName, pageable);
     }
 
+    @GetMapping("/saq")
+    public Page<Object[]> getSAQByStudentName(@RequestParam String studentName, Pageable pageable) {
+        return this.submissionService.getSAQByStudentName(studentName, pageable);
+    }
+
     @PostMapping
     public Long addSubmission(@RequestParam Long questionId, @RequestParam String studentAnswer, @RequestParam String studentName) {
         System.out.println(questionId + " " + studentAnswer + " " + studentName);

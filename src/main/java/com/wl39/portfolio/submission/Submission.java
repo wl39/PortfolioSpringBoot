@@ -3,6 +3,7 @@ package com.wl39.portfolio.submission;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.wl39.portfolio.question.Question;
 import jakarta.persistence.*;
+import org.springframework.boot.context.properties.bind.DefaultValue;
 
 import java.time.LocalDateTime;
 
@@ -20,6 +21,8 @@ public class Submission {
     private String studentName;
     private LocalDateTime submitDate;
 
+    private Boolean marked;
+
     public Submission() {
 
     }
@@ -29,6 +32,15 @@ public class Submission {
         this.studentAnswer = studentAnswer;
         this.studentName = studentName;
         this.submitDate = submitDate;
+    }
+
+    public Submission(Long id, Question question, String studentAnswer, String studentName, LocalDateTime submitDate, Boolean marked) {
+        this.id = id;
+        this.question = question;
+        this.studentAnswer = studentAnswer;
+        this.studentName = studentName;
+        this.submitDate = submitDate;
+        this.marked = marked;
     }
 
     public Long getId() {
@@ -65,5 +77,13 @@ public class Submission {
 
     public void setSubmitDate(LocalDateTime submitDate) {
         this.submitDate = submitDate;
+    }
+
+    public Boolean getMarked() {
+        return marked;
+    }
+
+    public void setMarked(Boolean marked) {
+        this.marked = marked;
     }
 }

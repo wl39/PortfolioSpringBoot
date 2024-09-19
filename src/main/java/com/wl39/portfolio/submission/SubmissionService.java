@@ -20,12 +20,13 @@ public class SubmissionService {
         this.questionRepository = questionRepository;
     }
 
-    public void addSubmissions(List<SubmissionDTO> submissons) {
-        for (SubmissionDTO submission : submissons) {
+    public void addSubmissions(List<SubmissionDTO> submissions) {
+        for (SubmissionDTO submission : submissions) {
             Long questionId = submission.getQuestionId();
             String studentAnswer = submission.getStudentAnswer();
             String studentName = submission.getStudentName();
             LocalDateTime submitDate = submission.getSubmitDate();
+            Boolean marked = submission.getMarked();
 
             Question question = this.questionRepository.findById(questionId).orElse(null);
 
@@ -41,6 +42,8 @@ public class SubmissionService {
                 newSubmission.setStudentAnswer(studentAnswer);
                 newSubmission.setStudentName(studentName);
                 newSubmission.setSubmitDate(submitDate);
+
+                newSubmission.setMarked(question.getType().equals('m'));
 
                 submissionRepository.save(newSubmission);
             }
@@ -68,5 +71,9 @@ public class SubmissionService {
 //
 //        return submissionPage.map()
         return this.submissionRepository.findByStudentName(studentName, pageable);
+    }
+
+    public Page<Object[]> getSAQByStudentName(String studentName, Pageable pageable) {
+        return this.submissionRepository.getSAQByStudentName(studentName, pageable);
     }
 }

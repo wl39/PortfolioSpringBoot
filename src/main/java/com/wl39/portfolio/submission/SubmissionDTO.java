@@ -7,6 +7,7 @@ public class SubmissionDTO {
     private String studentAnswer;
     private String studentName;
     private LocalDateTime submitDate;
+    private Boolean marked = true;
 
     public SubmissionDTO(Long questionId, String studentAnswer, String studentName, LocalDateTime submitDate) {
         this.questionId = questionId;
@@ -45,5 +46,13 @@ public class SubmissionDTO {
 
     public void setSubmitDate(LocalDateTime submitDate) {
         this.submitDate = submitDate;
+    }
+
+    public Boolean getMarked() {
+        return marked;
+    }
+
+    public void setMarked(Boolean marked) {
+        this.marked = marked;
     }
 }
