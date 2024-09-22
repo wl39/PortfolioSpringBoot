@@ -19,8 +19,8 @@ public class SubmissionController {
     }
 
     @GetMapping
-    public Page<Object[]> findByStudentName(@RequestParam String studentName, Pageable pageable) {
-        return this.submissionService.findByStudentName(studentName, pageable);
+    public Page<Object[]> findByStudentName(@RequestParam String studentName, @RequestParam Boolean getAll, Pageable pageable) {
+        return this.submissionService.findByStudentName(studentName, getAll, pageable);
     }
 
     @GetMapping("/saq")

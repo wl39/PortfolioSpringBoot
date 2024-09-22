@@ -15,4 +15,7 @@ public interface SubmissionRepository extends JpaRepository<Submission, Long> {
 
     @Query("SELECT DISTINCT s FROM Submission s JOIN FETCH s.question q WHERE s.studentName = :studentName AND s.marked = FALSE")
     Page<Object[]> getSAQByStudentName(@Param("studentName")String studentName, Pageable pageable);
+
+    @Query("SELECT DISTINCT s FROM Submission s JOIN FETCH s.question q WHERE s.studentName = :studentName AND s.marked = TRUE")
+    Page<Object[]> findMarkedByStudentName(String studentName, Pageable pageable);
 }

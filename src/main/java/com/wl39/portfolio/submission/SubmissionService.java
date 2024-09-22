@@ -14,6 +14,7 @@ import java.util.List;
 public class SubmissionService {
     private final SubmissionRepository submissionRepository;
     private final QuestionRepository questionRepository;
+
     @Autowired
     public SubmissionService(SubmissionRepository submissionRepository, QuestionRepository questionRepository) {
         this.submissionRepository = submissionRepository;
@@ -49,6 +50,7 @@ public class SubmissionService {
             }
         }
     }
+
     public Long addSubmission(Long questionId, String studentAnswer, String studentName) {
         Question question = this.questionRepository.findById(questionId).orElse(null);
 
@@ -66,12 +68,17 @@ public class SubmissionService {
         return -1L;
     }
 
-    public Page<Object[]> findByStudentName(String studentName, Pageable pageable) {
-//        Page<Object[]> submissionPage = submissionRepository.findByStudentName(studentName, pageable);
-//
-//        return submissionPage.map()
-        return this.submissionRepository.findByStudentName(studentName, pageable);
+    public Page<Object[]> findByStudentName(String studentName, Boolean getAll, Pageable pageable) {
+        if (getAll)
+            return this.submissionRepository.findByStudentName(studentName, pageable);
+        else
+            return this.submissionRepository.findMarkedByStudentName(studentName, pageable);
     }
+
+    public Page<Object[]> findMarkedByStudentName(String studentName, Pageable pageable) {
+        return this.submissionRepository.findMarkedByStudentName(studentName, pageable);
+    }
+
 
     public Page<Object[]> getSAQByStudentName(String studentName, Pageable pageable) {
         return this.submissionRepository.getSAQByStudentName(studentName, pageable);
