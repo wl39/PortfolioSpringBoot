@@ -1,5 +1,8 @@
 package com.wl39.portfolio.question;
 
+import com.wl39.portfolio.calendar.Calendar;
+import com.wl39.portfolio.calendar.CalendarID;
+import com.wl39.portfolio.calendar.CalendarRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -11,14 +14,25 @@ import java.util.stream.Collectors;
 @Service
 public class QuestionService {
     private final QuestionRepository questionRepository;
+    private final CalendarRepository calendarRepository;
 
     @Autowired
-    public QuestionService(QuestionRepository questionRepository) {
+    public QuestionService(QuestionRepository questionRepository, CalendarRepository calendarRepository) {
         this.questionRepository = questionRepository;
+        this.calendarRepository = calendarRepository;
     }
 
     public Long uploadQuestion(Question question) {
         this.questionRepository.save(question);
+
+        for (String name : question.getStudentsFor()) {
+            if (this.calendarRepository.findById(new CalendarID(question.getTargetDate().toLocalDate(), name)).isPresent()) {
+                this.calendarRepository.questions(question.getTargetDate().toLocalDate(), name);
+            } else {
+                this.calendarRepository.save(new Calendar(new CalendarID(question.getTargetDate().toLocalDate(), name)));
+            }
+        }
+
 
         return question.getId();
     }

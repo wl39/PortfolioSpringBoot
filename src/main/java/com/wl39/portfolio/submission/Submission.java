@@ -1,9 +1,7 @@
 package com.wl39.portfolio.submission;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.wl39.portfolio.question.Question;
 import jakarta.persistence.*;
-import org.springframework.boot.context.properties.bind.DefaultValue;
 
 import java.time.LocalDateTime;
 

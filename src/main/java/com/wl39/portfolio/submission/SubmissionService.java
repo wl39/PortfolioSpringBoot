@@ -1,5 +1,6 @@
 package com.wl39.portfolio.submission;
 
+import com.wl39.portfolio.calendar.CalendarRepository;
 import com.wl39.portfolio.question.Question;
 import com.wl39.portfolio.question.QuestionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,11 +15,13 @@ import java.util.List;
 public class SubmissionService {
     private final SubmissionRepository submissionRepository;
     private final QuestionRepository questionRepository;
+    private final CalendarRepository calendarRepository;
 
     @Autowired
-    public SubmissionService(SubmissionRepository submissionRepository, QuestionRepository questionRepository) {
+    public SubmissionService(SubmissionRepository submissionRepository, QuestionRepository questionRepository, CalendarRepository calendarRepository) {
         this.submissionRepository = submissionRepository;
         this.questionRepository = questionRepository;
+        this.calendarRepository = calendarRepository;
     }
 
     public void addSubmissions(List<SubmissionDTO> submissions) {
@@ -37,6 +40,12 @@ public class SubmissionService {
                     studentsFor.remove(studentName);
                     question.setStudentsFor(studentsFor);
                     this.questionRepository.save(question);
+
+                    if(question.getType() == 's') { // s -> Short Answer Question
+                        this.calendarRepository.unmarked(question.getTargetDate().toLocalDate(), studentName);
+                    } else {
+                        this.calendarRepository.solved(question.getTargetDate().toLocalDate(), studentName);
+                    }
                 }
                 Submission newSubmission = new Submission();
                 newSubmission.setQuestion(question);
