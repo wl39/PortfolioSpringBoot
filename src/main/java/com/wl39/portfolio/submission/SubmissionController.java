@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:3000")
@@ -21,6 +22,11 @@ public class SubmissionController {
     @GetMapping
     public Page<Object[]> findByStudentName(@RequestParam String studentName, @RequestParam Boolean getAll, Pageable pageable) {
         return this.submissionService.findByStudentName(studentName, getAll, pageable);
+    }
+
+    @GetMapping("/review")
+    public Page<Object[]> findRevision(@RequestParam String studentName, Pageable pageable) {
+        return this.submissionService.findRevisionByStudentName(studentName, pageable);
     }
 
     @GetMapping("/saq")
@@ -39,4 +45,9 @@ public class SubmissionController {
         submissionService.addSubmissions(submissions);
     }
 
+    @PutMapping("/marks")
+    public void markSAQ(@RequestParam String studentName, @RequestBody Map<Long, Integer> questionMarks) {
+        // Pass the map to the service to process the marks
+        submissionService.markSAQ(studentName, questionMarks);
+    }
 }

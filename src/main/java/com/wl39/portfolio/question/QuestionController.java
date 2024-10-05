@@ -24,7 +24,7 @@ public class QuestionController {
     }
 
     @GetMapping("/{studentName}")
-    public List<Question> getAllQuestionsPage(@PathVariable String studentName) {
+    public List<Question> getAllQuestionsByStudentName(@PathVariable String studentName) {
         return this.questionService.findByStudentName(studentName);
     }
 

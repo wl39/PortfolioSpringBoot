@@ -19,7 +19,7 @@ public class Submission {
     private String studentName;
     private LocalDateTime submitDate;
 
-    private Boolean marked;
+    private Integer marked;
 
     public Submission() {
 
@@ -32,7 +32,7 @@ public class Submission {
         this.submitDate = submitDate;
     }
 
-    public Submission(Long id, Question question, String studentAnswer, String studentName, LocalDateTime submitDate, Boolean marked) {
+    public Submission(Long id, Question question, String studentAnswer, String studentName, LocalDateTime submitDate, Integer marked) {
         this.id = id;
         this.question = question;
         this.studentAnswer = studentAnswer;
@@ -77,11 +77,11 @@ public class Submission {
         this.submitDate = submitDate;
     }
 
-    public Boolean getMarked() {
+    public Integer getMarked() {
         return marked;
     }
 
-    public void setMarked(Boolean marked) {
+    public void setMarked(Integer marked) {
         this.marked = marked;
     }
 }

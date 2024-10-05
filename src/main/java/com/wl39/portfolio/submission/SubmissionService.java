@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class SubmissionService {
@@ -53,7 +54,12 @@ public class SubmissionService {
                 newSubmission.setStudentName(studentName);
                 newSubmission.setSubmitDate(submitDate);
 
-                newSubmission.setMarked(question.getType().equals('m'));
+
+                if (question.getType().equals('m')) {
+                    newSubmission.setMarked(1);
+                } else {
+                    newSubmission.setMarked(0);
+                }
 
                 submissionRepository.save(newSubmission);
             }
@@ -84,6 +90,10 @@ public class SubmissionService {
             return this.submissionRepository.findMarkedByStudentName(studentName, pageable);
     }
 
+    public Page<Object[]> findRevisionByStudentName(String studentName, Pageable pageable) {
+        return this.submissionRepository.findRevisionsByStudentName(studentName, pageable);
+    }
+
     public Page<Object[]> findMarkedByStudentName(String studentName, Pageable pageable) {
         return this.submissionRepository.findMarkedByStudentName(studentName, pageable);
     }
@@ -91,5 +101,15 @@ public class SubmissionService {
 
     public Page<Object[]> getSAQByStudentName(String studentName, Pageable pageable) {
         return this.submissionRepository.getSAQByStudentName(studentName, pageable);
+    }
+
+    public void markSAQ(String studentName, Map<Long, Integer> questionMarks) {
+        for (Map.Entry<Long, Integer> entry : questionMarks.entrySet()) {
+            Long questionId = entry.getKey();
+            Integer mark = entry.getValue();
+
+            // Logic to update submission marks
+            submissionRepository.markSubmission(studentName, questionId, mark);
+        }
     }
 }
