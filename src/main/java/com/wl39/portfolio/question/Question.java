@@ -25,9 +25,7 @@ public class Question {
     private List<String> studentsFor;
     private String answer;
     private String explanation;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime generatedDate;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime targetDate;
     @Transient
     private Long minAgo;
