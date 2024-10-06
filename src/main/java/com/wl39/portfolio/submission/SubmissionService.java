@@ -107,7 +107,12 @@ public class SubmissionService {
         for (Map.Entry<Long, Integer> entry : questionMarks.entrySet()) {
             Long questionId = entry.getKey();
             Integer mark = entry.getValue();
+            Question question = this.questionRepository.findById(questionId).orElse(null);
 
+            System.out.println(question);
+            if (question != null) {
+                calendarRepository.solvedSAQ(question.getTargetDate().toLocalDate(), studentName);
+            }
             // Logic to update submission marks
             submissionRepository.markSubmission(studentName, questionId, mark);
         }

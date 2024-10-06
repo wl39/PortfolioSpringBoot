@@ -14,10 +14,20 @@ public interface CalendarRepository extends JpaRepository<Calendar, CalendarID> 
     @Transactional
     @Query("UPDATE Calendar c " +
             "SET c.solved = CASE " +
-            "WHEN c.solved + 1 + c.unmarked > c.questions THEN c.questions " +
+            "WHEN c.solved + 1 + c.unmarked >= c.questions THEN c.questions " +
             "ELSE c.solved + 1 END " +
             "WHERE c.id.date = :date AND c.id.studentName = :name")
     int solved(@Param("date") LocalDate date, @Param("name") String name);
+
+    @Modifying
+    @Transactional
+    @Query("UPDATE Calendar c " +
+            "SET c.solved = c.solved + 1, " +
+            "c.unmarked = c.unmarked - 1 " +
+            "WHERE c.id.date = :date AND c.id.studentName = :name")
+    int solvedSAQ(@Param("date") LocalDate date, @Param("name") String name);
+
+
 
     @Modifying
     @Transactional

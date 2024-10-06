@@ -16,6 +16,7 @@ public class Question {
     @Column(length = 10000)
     private String question;
     private Character type;
+    @Column(length = 10000)
     private List<String> candidates;
     private String hint;
 

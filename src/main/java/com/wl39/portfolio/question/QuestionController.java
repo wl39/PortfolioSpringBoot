@@ -44,4 +44,9 @@ public class QuestionController {
 
         return question.getId();
     }
+
+    @PostMapping("/multiples")
+    public List<Question> updateMultipleQuestionsWithStudentsFor(@RequestBody QuestionStudentsDTO questionStudentsDTO) {
+        return questionService.updateQuestionsWithStudentsFor(questionStudentsDTO.getQuestionIds(), questionStudentsDTO.getStudentsFor(), questionStudentsDTO.getTargetDate());
+    }
 }
