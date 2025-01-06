@@ -3,6 +3,7 @@ package com.wl39.portfolio.question;
 import com.wl39.portfolio.calendar.Calendar;
 import com.wl39.portfolio.calendar.CalendarID;
 import com.wl39.portfolio.calendar.CalendarRepository;
+import com.wl39.portfolio.candidate.Candidate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -25,16 +26,11 @@ public class QuestionService {
     }
 
     public Long uploadQuestion(Question question) {
-        this.questionRepository.save(question);
-
-        for (String name : question.getStudentsFor()) {
-            if (this.calendarRepository.findById(new CalendarID(question.getTargetDate().toLocalDate(), name)).isPresent()) {
-                this.calendarRepository.questions(question.getTargetDate().toLocalDate(), name);
-            } else {
-                this.calendarRepository.save(new Calendar(new CalendarID(question.getTargetDate().toLocalDate(), name)));
-            }
+        for (Candidate c : question.getCandidates()) {
+            c.setQuestion(question);
         }
 
+        this.questionRepository.save(question);
 
         return question.getId();
     }
