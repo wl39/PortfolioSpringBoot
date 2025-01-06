@@ -1,5 +1,6 @@
 package com.wl39.portfolio.question;
 
+import com.wl39.portfolio.candidate.Candidate;
 import jakarta.persistence.Transient;
 
 import java.time.LocalDateTime;
@@ -11,7 +12,7 @@ public class QuestionDTO {
     private String title;
     private String question;
     private Character type;
-    private List<String> candidates;
+    private List<Candidate> candidates;
     private String hint;
     private LocalDateTime generatedDate;
     private LocalDateTime targetDate;
@@ -28,7 +29,7 @@ public class QuestionDTO {
     @Transient
     private Long dayLeft;
 
-    public QuestionDTO(Long id, String title, String question, Character type, List<String> candidates, String hint, LocalDateTime generatedDate, LocalDateTime targetDate) {
+    public QuestionDTO(Long id, String title, String question, Character type, List<Candidate> candidates, String hint, LocalDateTime generatedDate, LocalDateTime targetDate) {
         this.id = id;
         this.title = title;
         this.question = question;
@@ -71,11 +72,11 @@ public class QuestionDTO {
         this.type = type;
     }
 
-    public List<String> getCandidates() {
+    public List<Candidate> getCandidates() {
         return candidates;
     }
 
-    public void setCandidates(List<String> candidates) {
+    public void setCandidates(List<Candidate> candidates) {
         this.candidates = candidates;
     }
 

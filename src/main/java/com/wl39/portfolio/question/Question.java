@@ -1,7 +1,11 @@
 package com.wl39.portfolio.question;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.wl39.portfolio.candidate.Candidate;
 import jakarta.persistence.*;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
@@ -16,8 +20,9 @@ public class Question {
     @Column(length = 10000)
     private String question;
     private Character type;
-    @Column(length = 10000)
-    private List<String> candidates;
+    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Fetch(FetchMode.JOIN)
+    private List<Candidate> candidates;
     private String hint;
 
     @ElementCollection
@@ -43,7 +48,7 @@ public class Question {
 
     public Question() {}
 
-    public Question(String title, String question, Character type, List<String> candidates, String hint, List<String> studentsFor, String answer, String explanation, LocalDateTime generatedDate, LocalDateTime targetDate) {
+    public Question(String title, String question, Character type, List<Candidate> candidates, String hint, List<String> studentsFor, String answer, String explanation, LocalDateTime generatedDate, LocalDateTime targetDate) {
         this.title = title;
         this.question = question;
         this.type = type;
@@ -89,11 +94,11 @@ public class Question {
         this.type = type;
     }
 
-    public List<String> getCandidates() {
+    public List<Candidate> getCandidates() {
         return candidates;
     }
 
-    public void setCandidates(List<String> candidates) {
+    public void setCandidates(List<Candidate> candidates) {
         this.candidates = candidates;
     }
 
