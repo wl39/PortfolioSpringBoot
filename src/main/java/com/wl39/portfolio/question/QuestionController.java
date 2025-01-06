@@ -29,12 +29,12 @@ public class QuestionController {
     }
 
     @GetMapping("/q/{studentName}")
-    public List<QuestionDTO> getAllQuestionsOnlyPage(@PathVariable String studentName) {
+    public List<QuestionStudentDTO> getAllQuestionsOnlyPage(@PathVariable String studentName) {
         return this.questionService.findByStudentNameQuestionOnly(studentName);
     }
 
     @GetMapping("/page/{studentName}")
-    public Page<QuestionDTO> getAllQuestionsOnlyPage(Pageable pageable, @PathVariable String studentName) {
+    public Page<QuestionStudentDTO> getAllQuestionsOnlyPage(Pageable pageable, @PathVariable String studentName) {
         return this.questionService.getAllQuestionsOnlyPage(pageable, studentName);
     }
 
@@ -46,7 +46,7 @@ public class QuestionController {
     }
 
     @PostMapping("/multiples")
-    public List<Question> updateMultipleQuestionsWithStudentsFor(@RequestBody QuestionStudentsDTO questionStudentsDTO) {
-        return questionService.updateQuestionsWithStudentsFor(questionStudentsDTO.getQuestionIds(), questionStudentsDTO.getStudentsFor(), questionStudentsDTO.getTargetDate());
+    public List<Question> updateMultipleQuestionsWithStudentsFor(@RequestBody QuestionsPostStudentsDTO questionsPostStudentsDTO) {
+        return questionService.updateQuestionsWithStudentsFor(questionsPostStudentsDTO.getQuestionIds(), questionsPostStudentsDTO.getStudentsFor(), questionsPostStudentsDTO.getTargetDate());
     }
 }

@@ -8,5 +8,5 @@ import java.util.List;
 
 public interface QuestionRepository extends JpaRepository<Question, Long> {
     List<Question> findByStudentsForContaining(String studentName);
-    Page<QuestionDTO> findByStudentsForContaining(Pageable pageable, String studentName);
+    Page<QuestionStudentDTO> findByStudentsForContaining(Pageable pageable, String studentName);
 }

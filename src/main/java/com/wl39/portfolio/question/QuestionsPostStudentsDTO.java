@@ -3,7 +3,7 @@ package com.wl39.portfolio.question;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public class QuestionStudentsDTO {
+public class QuestionsPostStudentsDTO {
     private List<Long> questionIds;
     private List<String> studentsFor;
     private LocalDateTime targetDate;

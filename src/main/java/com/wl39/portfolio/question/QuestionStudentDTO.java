@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
-public class QuestionDTO {
+public class QuestionStudentDTO {
     private Long id;
     private String title;
     private String question;
@@ -29,7 +29,7 @@ public class QuestionDTO {
     @Transient
     private Long dayLeft;
 
-    public QuestionDTO(Long id, String title, String question, Character type, List<Candidate> candidates, String hint, LocalDateTime generatedDate, LocalDateTime targetDate) {
+    public QuestionStudentDTO(Long id, String title, String question, Character type, List<Candidate> candidates, String hint, LocalDateTime generatedDate, LocalDateTime targetDate) {
         this.id = id;
         this.title = title;
         this.question = question;

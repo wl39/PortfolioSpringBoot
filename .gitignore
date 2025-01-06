@@ -1,0 +1,6 @@
+# Ignore Maven build directory
+target/
+
+# IntelliJ IDEA files
+.idea/
+*.iml

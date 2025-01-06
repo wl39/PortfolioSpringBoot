@@ -43,11 +43,11 @@ public class QuestionService {
         return this.questionRepository.findByStudentsForContaining(studentName);
     }
 
-    public List<QuestionDTO> findByStudentNameQuestionOnly(String studentName) {
+    public List<QuestionStudentDTO> findByStudentNameQuestionOnly(String studentName) {
         List<Question> questions = this.questionRepository.findByStudentsForContaining(studentName);
 
         return questions.stream().map(question ->
-                    new QuestionDTO(
+                    new QuestionStudentDTO(
                             question.getId(),
                             question.getTitle(),
                             question.getQuestion(),
@@ -60,7 +60,7 @@ public class QuestionService {
                 ).collect(Collectors.toList());
     }
 
-    public Page<QuestionDTO> getAllQuestionsOnlyPage(Pageable pageable, String studentName) {
+    public Page<QuestionStudentDTO> getAllQuestionsOnlyPage(Pageable pageable, String studentName) {
         return this.questionRepository.findByStudentsForContaining(pageable, studentName);
     }
 
@@ -78,7 +78,7 @@ public class QuestionService {
                     .orElseThrow(() -> new IllegalArgumentException("Invalid question ID: " + questionId));
 
             // Create a new Question instance as a replica of the original
-            Question newQuestion = new Question();
+            Question newQuestion = new Question(); // 문제 새로 만들 필요 없이 calendar랑 학생들에게 문제만 할당하면 될듯
             newQuestion.setTitle(originalQuestion.getTitle());
             newQuestion.setQuestion(originalQuestion.getQuestion());
             newQuestion.setType(originalQuestion.getType());
