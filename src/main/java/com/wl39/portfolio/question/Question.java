@@ -1,6 +1,8 @@
 package com.wl39.portfolio.question;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.wl39.portfolio.assignment.Assignment;
 import com.wl39.portfolio.candidate.Candidate;
 import jakarta.persistence.*;
 import org.hibernate.annotations.Fetch;
@@ -25,10 +27,10 @@ public class Question {
     private List<Candidate> candidates;
     private String hint;
 
-    @ElementCollection
-    @CollectionTable(name = "question_students_for", joinColumns = @JoinColumn(name = "question_id"))
-    @Column(name = "students_for")
-    private List<String> studentsFor;
+    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Fetch(FetchMode.JOIN)
+    private List<Assignment> assignments;
+
     private String answer;
     private String explanation;
     private LocalDateTime generatedDate;
@@ -48,13 +50,13 @@ public class Question {
 
     public Question() {}
 
-    public Question(String title, String question, Character type, List<Candidate> candidates, String hint, List<String> studentsFor, String answer, String explanation, LocalDateTime generatedDate, LocalDateTime targetDate) {
+    public Question(String title, String question, Character type, List<Candidate> candidates, String hint, List<Assignment> assignments, String answer, String explanation, LocalDateTime generatedDate, LocalDateTime targetDate) {
         this.title = title;
         this.question = question;
         this.type = type;
         this.candidates = candidates;
+        this.assignments = assignments;
         this.hint = hint;
-        this.studentsFor = studentsFor;
         this.answer = answer;
         this.explanation = explanation;
         this.generatedDate = generatedDate;
@@ -110,12 +112,12 @@ public class Question {
         this.hint = hint;
     }
 
-    public List<String> getStudentsFor() {
-        return studentsFor;
+    public List<Assignment> getAssignments() {
+        return assignments;
     }
 
-    public void setStudentsFor(List<String> studentsFor) {
-        this.studentsFor = studentsFor;
+    public void setAssignments(List<Assignment> assignments) {
+        this.assignments = assignments;
     }
 
     public String getAnswer() {

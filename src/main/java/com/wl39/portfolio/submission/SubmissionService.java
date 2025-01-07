@@ -36,18 +36,18 @@ public class SubmissionService {
             Question question = this.questionRepository.findById(questionId).orElse(null);
 
             if (question != null) {
-                List<String> studentsFor = question.getStudentsFor();
-                if (studentAnswer != null && studentsFor.contains(studentName)) {
-                    studentsFor.remove(studentName);
-                    question.setStudentsFor(studentsFor);
-                    this.questionRepository.save(question);
-
-                    if(question.getType() == 's') { // s -> Short Answer Question
-                        this.calendarRepository.unmarked(question.getTargetDate().toLocalDate(), studentName);
-                    } else {
-                        this.calendarRepository.solved(question.getTargetDate().toLocalDate(), studentName);
-                    }
-                }
+//                List<String> studentsFor = question.getStudentsFor();
+//                if (studentAnswer != null && studentsFor.contains(studentName)) {
+//                    studentsFor.remove(studentName);
+//                    question.setStudentsFor(studentsFor);
+//                    this.questionRepository.save(question);
+//
+//                    if(question.getType() == 's') { // s -> Short Answer Question
+//                        this.calendarRepository.unmarked(question.getTargetDate().toLocalDate(), studentName);
+//                    } else {
+//                        this.calendarRepository.solved(question.getTargetDate().toLocalDate(), studentName);
+//                    }
+//                }
                 Submission newSubmission = new Submission();
                 newSubmission.setQuestion(question);
                 newSubmission.setStudentAnswer(studentAnswer);

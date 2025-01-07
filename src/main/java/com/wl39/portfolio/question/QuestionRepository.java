@@ -9,9 +9,10 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface QuestionRepository extends JpaRepository<Question, Long> {
-    List<Question> findByStudentsForContaining(String studentName);
-    Page<QuestionStudentDTO> findByStudentsForContaining(Pageable pageable, String studentName);
+    List<Question> findByAssignments_Id_NameContaining(String name);
+//    List<Question> findByStudentsForContaining(String studentName);
+    Page<QuestionStudentDTO> findByAssignments_Id_NameContaining(Pageable pageable, String name);
 
-    @Query("SELECT q FROM Question q JOIN FETCH q.candidates WHERE q.id = :id AND q.name = :name")
+    @Query("SELECT q FROM Question q JOIN FETCH q.assignments a WHERE a.question = q AND a.id.name = :name")
     List<QuestionStudentDTO> findQuestionsByStudentName(@Param("name") String name);
 }

@@ -1,19 +1,20 @@
 package com.wl39.portfolio.assignment;
 
-import jakarta.persistence.EmbeddedId;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import com.wl39.portfolio.question.Question;
+import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name ="assignment")
-public class
-
-Assignment {
+public class Assignment {
     @EmbeddedId
     private AssignmentID id;
 
+    @MapsId("questionId")
+    @ManyToOne
+    @JoinColumn(name = "question_id", nullable = false)
+    private Question question;
     private LocalDateTime targetDate;
 
     public Assignment() {}
@@ -31,11 +32,25 @@ Assignment {
         this.id = id;
     }
 
+    public Question getQuestion() {
+        return question;
+    }
+
+    public void setQuestion(Question question) {
+        this.question = question;
+    }
+
     public LocalDateTime getTargetDate() {
         return targetDate;
     }
 
     public void setTargetDate(LocalDateTime targetDate) {
         this.targetDate = targetDate;
+    }
+
+    public void setDataFromQuestion(Question question) {
+        this.question = question;
+        this.targetDate = question.getTargetDate();
+        this.id.setGeneratedDate(question.getGeneratedDate());
     }
 }

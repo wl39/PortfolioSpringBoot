@@ -1,5 +1,6 @@
 package com.wl39.portfolio.question;
 
+import com.wl39.portfolio.assignment.Assignment;
 import com.wl39.portfolio.calendar.Calendar;
 import com.wl39.portfolio.calendar.CalendarID;
 import com.wl39.portfolio.calendar.CalendarRepository;
@@ -30,17 +31,21 @@ public class QuestionService {
             c.setQuestion(question);
         }
 
+        for (Assignment a : question.getAssignments()) {
+            a.setDataFromQuestion(question);
+        }
+
         this.questionRepository.save(question);
 
         return question.getId();
     }
 
-    public List<Question> findByStudentName(String studentName) {
-        return this.questionRepository.findByStudentsForContaining(studentName);
+    public List<Question> findByStudentName(String name) {
+        return this.questionRepository.findByAssignments_Id_NameContaining(name);
     }
 
     public List<QuestionStudentDTO> findByStudentNameQuestionOnly(String studentName) {
-        List<Question> questions = this.questionRepository.findByStudentsForContaining(studentName);
+        List<Question> questions = this.questionRepository.findByAssignments_Id_NameContaining(studentName);
 
         return questions.stream().map(question ->
                     new QuestionStudentDTO(
@@ -57,7 +62,7 @@ public class QuestionService {
     }
 
     public Page<QuestionStudentDTO> getAllQuestionsOnlyPage(Pageable pageable, String studentName) {
-        return this.questionRepository.findByStudentsForContaining(pageable, studentName);
+        return this.questionRepository.findByAssignments_Id_NameContaining(pageable, studentName);
     }
 
     public Page<Question> getAllQuestionsPage(Pageable pageable) {
@@ -82,17 +87,17 @@ public class QuestionService {
             newQuestion.setHint(originalQuestion.getHint());
 
             // Get the existing studentsFor list and create a new list for newQuestion
-            List<String> currentStudentsFor = originalQuestion.getStudentsFor();
+//            List<String> currentStudentsFor = originalQuestion.getStudentsFor();
 
             // Check if currentStudentsFor is null to avoid NullPointerException
-            if (currentStudentsFor == null) {
-                currentStudentsFor = new ArrayList<>();
-            }
-
-            // Create a new list for studentsFor in the new question
-            List<String> newStudentsFor = new ArrayList<>(currentStudentsFor); // Clone the current list
-            newStudentsFor.addAll(studentsFor); // Append new students to the new list
-            newQuestion.setStudentsFor(newStudentsFor); // Set the new list in the new question
+//            if (currentStudentsFor == null) {
+//                currentStudentsFor = new ArrayList<>();
+//            }
+//
+//            // Create a new list for studentsFor in the new question
+//            List<String> newStudentsFor = new ArrayList<>(currentStudentsFor); // Clone the current list
+//            newStudentsFor.addAll(studentsFor); // Append new students to the new list
+//            newQuestion.setStudentsFor(newStudentsFor); // Set the new list in the new question
 
             // Set the new target date for the new question
             newQuestion.setTargetDate(targetDate);

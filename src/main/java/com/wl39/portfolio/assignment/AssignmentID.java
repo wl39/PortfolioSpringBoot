@@ -3,28 +3,24 @@ package com.wl39.portfolio.assignment;
 import jakarta.persistence.Embeddable;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Embeddable
 public class AssignmentID {
-    private Long id;
-    // Student's name
+
+    private Long questionId;
     private String name;
-    private LocalDateTime date;
+    private LocalDateTime generatedDate;
 
     public AssignmentID() {}
 
-    public AssignmentID(Long id, String name, LocalDateTime date) {
-        this.id = id;
-        this.name = name;
-        this.date = date;
+    // Getters and setters
+    public Long getQuestionId() {
+        return questionId;
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
+    public void setQuestionId(Long questionId) {
+        this.questionId = questionId;
     }
 
     public String getName() {
@@ -35,11 +31,29 @@ public class AssignmentID {
         this.name = name;
     }
 
-    public LocalDateTime getDate() {
-        return date;
+    public LocalDateTime getGeneratedDate() {
+        return generatedDate;
     }
 
-    public void setDate(LocalDateTime date) {
-        this.date = date;
+    public void setGeneratedDate(LocalDateTime generatedDate) {
+        this.generatedDate = generatedDate;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        AssignmentID that = (AssignmentID) o;
+        return
+                Objects.equals(questionId, that.questionId) &&
+                Objects.equals(name, that.name) &&
+                Objects.equals(generatedDate, that.generatedDate);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(
+                questionId,
+                name, generatedDate);
     }
 }
