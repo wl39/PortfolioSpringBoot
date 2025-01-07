@@ -8,7 +8,9 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name ="assignment")
-public class Assignment {
+public class
+
+Assignment {
     @EmbeddedId
     private AssignmentID id;
 
