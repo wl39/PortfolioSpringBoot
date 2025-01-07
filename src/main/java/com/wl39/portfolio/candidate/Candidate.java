@@ -1,10 +1,12 @@
 package com.wl39.portfolio.candidate;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.wl39.portfolio.question.Question;
 import jakarta.persistence.*;
 
 @Entity
 @Table(name = "candidate")
+@JsonIgnoreProperties({"question"})
 public class Candidate {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

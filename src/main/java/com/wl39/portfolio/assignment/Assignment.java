@@ -1,5 +1,6 @@
 package com.wl39.portfolio.assignment;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.wl39.portfolio.question.Question;
 import jakarta.persistence.*;
 
@@ -7,6 +8,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name ="assignment")
+@JsonIgnoreProperties({"question"})
 public class Assignment {
     @EmbeddedId
     private AssignmentID id;
