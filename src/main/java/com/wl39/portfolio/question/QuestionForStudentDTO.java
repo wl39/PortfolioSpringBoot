@@ -1,13 +1,12 @@
 package com.wl39.portfolio.question;
 
 import com.wl39.portfolio.candidate.Candidate;
-import jakarta.persistence.Transient;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
-public class QuestionStudentDTO {
+public class QuestionForStudentDTO {
     private Long id;
     private String title;
     private String question;
@@ -16,20 +15,14 @@ public class QuestionStudentDTO {
     private String hint;
     private LocalDateTime generatedDate;
     private LocalDateTime targetDate;
-    @Transient
     private Long minAgo;
-    @Transient
     private Long hourAgo;
-    @Transient
     private Long dayAgo;
-    @Transient
     private Long minLeft;
-    @Transient
     private Long hourLeft;
-    @Transient
     private Long dayLeft;
 
-    public QuestionStudentDTO(Long id, String title, String question, Character type, List<Candidate> candidates, String hint, LocalDateTime generatedDate, LocalDateTime targetDate) {
+    public QuestionForStudentDTO(Long id, String title, String question, Character type, List<Candidate> candidates, String hint, LocalDateTime generatedDate, LocalDateTime targetDate) {
         this.id = id;
         this.title = title;
         this.question = question;

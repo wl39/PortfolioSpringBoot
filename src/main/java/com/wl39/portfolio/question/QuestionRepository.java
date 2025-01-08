@@ -10,9 +10,8 @@ import java.util.List;
 
 public interface QuestionRepository extends JpaRepository<Question, Long> {
     List<Question> findByAssignments_Id_NameContaining(String name);
-//    List<Question> findByStudentsForContaining(String studentName);
-    Page<QuestionStudentDTO> findByAssignments_Id_NameContaining(Pageable pageable, String name);
+    Page<Question> findByAssignments_Id_NameContaining(Pageable pageable, String name);
 
     @Query("SELECT q FROM Question q JOIN FETCH q.assignments a WHERE a.question = q AND a.id.name = :name")
-    List<QuestionStudentDTO> findQuestionsByStudentName(@Param("name") String name);
+    List<QuestionForStudentDTO> findQuestionsByStudentName(@Param("name") String name);
 }

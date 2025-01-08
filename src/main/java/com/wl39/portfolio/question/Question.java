@@ -10,6 +10,7 @@ import org.hibernate.annotations.FetchMode;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -97,9 +98,8 @@ public class Question {
     }
 
     public List<Candidate> getCandidates() {
-        return candidates;
+        return candidates == null ? new ArrayList<>() : candidates;
     }
-
     public void setCandidates(List<Candidate> candidates) {
         this.candidates = candidates;
     }
@@ -113,9 +113,8 @@ public class Question {
     }
 
     public List<Assignment> getAssignments() {
-        return assignments;
+        return assignments == null ? new ArrayList<>() : assignments;
     }
-
     public void setAssignments(List<Assignment> assignments) {
         this.assignments = assignments;
     }

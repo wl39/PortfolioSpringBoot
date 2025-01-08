@@ -29,12 +29,12 @@ public class QuestionController {
     }
 
     @GetMapping("/q/{studentName}")
-    public List<QuestionStudentDTO> getAllQuestionsOnlyPage(@PathVariable String studentName) {
+    public List<QuestionForStudentDTO> getAllQuestionsOnlyPage(@PathVariable String studentName) {
         return this.questionService.findByStudentNameQuestionOnly(studentName);
     }
 
     @GetMapping("/page/{studentName}")
-    public Page<QuestionStudentDTO> getAllQuestionsOnlyPage(Pageable pageable, @PathVariable String studentName) {
+    public Page<QuestionForStudentDTO> getAllQuestionsOnlyPage(Pageable pageable, @PathVariable String studentName) {
         return this.questionService.getAllQuestionsOnlyPage(pageable, studentName);
     }
 

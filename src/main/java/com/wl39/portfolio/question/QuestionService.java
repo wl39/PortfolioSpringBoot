@@ -44,11 +44,11 @@ public class QuestionService {
         return this.questionRepository.findByAssignments_Id_NameContaining(name);
     }
 
-    public List<QuestionStudentDTO> findByStudentNameQuestionOnly(String studentName) {
+    public List<QuestionForStudentDTO> findByStudentNameQuestionOnly(String studentName) {
         List<Question> questions = this.questionRepository.findByAssignments_Id_NameContaining(studentName);
 
         return questions.stream().map(question ->
-                    new QuestionStudentDTO(
+                    new QuestionForStudentDTO(
                             question.getId(),
                             question.getTitle(),
                             question.getQuestion(),
@@ -61,8 +61,18 @@ public class QuestionService {
                 ).collect(Collectors.toList());
     }
 
-    public Page<QuestionStudentDTO> getAllQuestionsOnlyPage(Pageable pageable, String studentName) {
-        return this.questionRepository.findByAssignments_Id_NameContaining(pageable, studentName);
+    public Page<QuestionForStudentDTO> getAllQuestionsOnlyPage(Pageable pageable, String name) {
+        Page<Question> questions = questionRepository.findByAssignments_Id_NameContaining(pageable, name);
+        return questions.map(question -> new QuestionForStudentDTO(
+                question.getId(),
+                question.getTitle(),
+                question.getQuestion(),
+                question.getType(),
+                question.getCandidates(),
+                question.getHint(),
+                question.getGeneratedDate(),
+                question.getTargetDate()
+        ));
     }
 
     public Page<Question> getAllQuestionsPage(Pageable pageable) {
