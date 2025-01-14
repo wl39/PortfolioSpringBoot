@@ -5,7 +5,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "https://91b.co.uk")
 @RequestMapping(path = "api/v1/simple_math")
 public class SimpleSubmissionController {
     private final SimpleSubmissionService simpleSubmissionService;
