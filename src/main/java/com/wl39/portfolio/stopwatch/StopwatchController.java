@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@CrossOrigin(origins="https://91b.co.uk")
+@CrossOrigin(origins="http://localhost:3000")
 @RequestMapping(path = "api/v1/stopwatch")
 public class StopwatchController {
     private final StopwatchService stopwatchService;
