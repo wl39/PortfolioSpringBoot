@@ -5,6 +5,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 @Service
 public class SimpleSubmissionService {
     private final SimpleSubmissionRepository simpleSubmissionRepository;
@@ -27,5 +30,9 @@ public class SimpleSubmissionService {
 
     public Long getCounts(String name) {
         return this.simpleSubmissionRepository.countByName(name);
+    }
+
+    public Long getCounts(String name, LocalDate submitDate) {
+        return this.simpleSubmissionRepository.countByNameAndSubmitDate(name, submitDate);
     }
 }

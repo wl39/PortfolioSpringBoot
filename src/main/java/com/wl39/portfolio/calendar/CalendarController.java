@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "https://91b.co.uk")
 @RequestMapping(path = "api/v1/calendar")
 public class CalendarController {
     private final CalendarService calendarService;
