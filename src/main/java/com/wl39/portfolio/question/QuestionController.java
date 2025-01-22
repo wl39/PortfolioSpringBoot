@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@CrossOrigin(origins="http://localhost:3000")
+@CrossOrigin(origins="https://91b.co.uk")
 @RequestMapping(path = "api/v1/questions")
 public class QuestionController {
     private final QuestionService questionService;
