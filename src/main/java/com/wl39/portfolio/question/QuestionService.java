@@ -1,9 +1,6 @@
 package com.wl39.portfolio.question;
 
 import com.wl39.portfolio.assignment.Assignment;
-import com.wl39.portfolio.calendar.Calendar;
-import com.wl39.portfolio.calendar.CalendarID;
-import com.wl39.portfolio.calendar.CalendarRepository;
 import com.wl39.portfolio.candidate.Candidate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -18,18 +15,18 @@ import java.util.stream.Collectors;
 @Service
 public class QuestionService {
     private final QuestionRepository questionRepository;
-    private final CalendarRepository calendarRepository;
 
     @Autowired
-    public QuestionService(QuestionRepository questionRepository, CalendarRepository calendarRepository) {
+    public QuestionService(QuestionRepository questionRepository) {
         this.questionRepository = questionRepository;
-        this.calendarRepository = calendarRepository;
     }
 
     public Long uploadQuestion(Question question) {
-        for (Candidate c : question.getCandidates()) {
-            c.setQuestion(question);
-        }
+
+        if (question.getType() == 'm')
+            for (Candidate c : question.getCandidates()) {
+                c.setQuestion(question);
+            }
 
         for (Assignment a : question.getAssignments()) {
             a.setDataFromQuestion(question);
@@ -96,18 +93,6 @@ public class QuestionService {
             newQuestion.setCandidates(originalQuestion.getCandidates());
             newQuestion.setHint(originalQuestion.getHint());
 
-            // Get the existing studentsFor list and create a new list for newQuestion
-//            List<String> currentStudentsFor = originalQuestion.getStudentsFor();
-
-            // Check if currentStudentsFor is null to avoid NullPointerException
-//            if (currentStudentsFor == null) {
-//                currentStudentsFor = new ArrayList<>();
-//            }
-//
-//            // Create a new list for studentsFor in the new question
-//            List<String> newStudentsFor = new ArrayList<>(currentStudentsFor); // Clone the current list
-//            newStudentsFor.addAll(studentsFor); // Append new students to the new list
-//            newQuestion.setStudentsFor(newStudentsFor); // Set the new list in the new question
 
             // Set the new target date for the new question
             newQuestion.setTargetDate(targetDate);
@@ -117,14 +102,6 @@ public class QuestionService {
             newQuestion.setExplanation(originalQuestion.getExplanation());
             newQuestion.setGeneratedDate(LocalDateTime.now()); // or set to original if needed
 
-            // Update the calendar repository with the new list of students
-            for (String name : studentsFor) {
-                if (this.calendarRepository.findById(new CalendarID(targetDate.toLocalDate(), name)).isPresent()) {
-                    this.calendarRepository.questions(targetDate.toLocalDate(), name);
-                } else {
-                    this.calendarRepository.save(new Calendar(new CalendarID(targetDate.toLocalDate(), name)));
-                }
-            }
 
             // Save the new question
             newQuestions.add(questionRepository.save(newQuestion));
