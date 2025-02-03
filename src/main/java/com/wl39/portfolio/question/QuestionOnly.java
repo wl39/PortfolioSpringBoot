@@ -1,49 +1,28 @@
 package com.wl39.portfolio.question;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.wl39.portfolio.assignment.Assignment;
 import com.wl39.portfolio.candidate.Candidate;
-import jakarta.persistence.*;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
 
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
 import java.util.List;
 
-@Entity
-@Table
-public class Question {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class QuestionOnly {
     private Long id;
     private String title;
-    @Column(length = 10000)
     private String question;
     private Character type;
-    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Candidate> candidates;
     private String hint;
-
-    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Assignment> assignments;
-
-    @Column(length = 1000)
     private String answer;
-
-    @Column(length = 2000)
     private String explanation;
     private LocalDateTime generatedDate;
-    public Question() {}
 
-    public Question(String title, String question, Character type, List<Candidate> candidates, String hint, List<Assignment> assignments, String answer, String explanation, LocalDateTime generatedDate) {
+
+    public QuestionOnly(Long id, String title, String question, Character type, List<Candidate> candidates, String hint, String answer, String explanation, LocalDateTime generatedDate) {
+        this.id = id;
         this.title = title;
         this.question = question;
         this.type = type;
         this.candidates = candidates;
-        this.assignments = assignments;
         this.hint = hint;
         this.answer = answer;
         this.explanation = explanation;
@@ -51,7 +30,6 @@ public class Question {
     }
 
     public Long getId() {
-        System.out.println();
         return id;
     }
 
@@ -84,8 +62,9 @@ public class Question {
     }
 
     public List<Candidate> getCandidates() {
-        return candidates == null ? new ArrayList<>() : candidates;
+        return candidates;
     }
+
     public void setCandidates(List<Candidate> candidates) {
         this.candidates = candidates;
     }
@@ -96,13 +75,6 @@ public class Question {
 
     public void setHint(String hint) {
         this.hint = hint;
-    }
-
-    public List<Assignment> getAssignments() {
-        return assignments == null ? new ArrayList<>() : assignments;
-    }
-    public void setAssignments(List<Assignment> assignments) {
-        this.assignments = assignments;
     }
 
     public String getAnswer() {
@@ -127,22 +99,5 @@ public class Question {
 
     public void setGeneratedDate(LocalDateTime generatedDate) {
         this.generatedDate = generatedDate;
-    }
-
-
-
-    @Override
-    public String toString() {
-        return "Question{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", question='" + question + '\'' +
-                ", type=" + type +
-                ", candidates=" + candidates +
-                ", hint='" + hint + '\'' +
-                ", answer='" + answer + '\'' +
-                ", explanation='" + explanation + '\'' +
-                ", generatedDate=" + generatedDate +
-                '}';
     }
 }

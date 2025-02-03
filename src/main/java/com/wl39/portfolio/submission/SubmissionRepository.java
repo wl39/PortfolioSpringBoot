@@ -12,23 +12,25 @@ import org.springframework.transaction.annotation.Transactional;
 
 
 public interface SubmissionRepository extends JpaRepository<Submission, Long> {
-    @Query("SELECT DISTINCT s FROM Submission s JOIN FETCH s.question q WHERE s.studentName = :studentName")
-    Page<Object[]> findByStudentName(@Param("studentName") String studentName, Pageable pageable);
+    Page<Submission> findByStudentName(Pageable pageable, String name);
+    Page<Submission> findByStudentNameAndMarked(Pageable pageable, String name, Integer marked);
 
-//    @Query("SELECT DISTINCT s FROM Submission s JOIN FETCH s.question q WHERE s.studentName = :studentName AND (s.marked = -1 OR (q.type = 'm' s.studentAnswer != q.answer)) ")
-//    Page<Object[]> findRevisionsByStudentName(@Param("studentName") String studentName, Pageable pageable);
-    @Query("SELECT DISTINCT s FROM Submission s JOIN FETCH s.question q WHERE s.studentName = :studentName AND (s.marked = -1 OR (q.type = 'm' AND s.studentAnswer != q.answer))")
-    Page<Object[]> findRevisionsByStudentName(@Param("studentName") String studentName, Pageable pageable);
+    @Query("""
+            SELECT COUNT(DISTINCT s)
+            FROM Submission s
+            JOIN s.student stu
+            WHERE YEAR(s.targetDate) = :year AND MONTH(s.targetDate) = :month
+            AND stu.name = :name
+            """) // WHERE MARKED -1 OR 1 OR 0
+    Long count(@Param("name") String name, @Param("year") int year, @Param("month") int month);
 
-
-    @Query("SELECT DISTINCT s FROM Submission s JOIN FETCH s.question q WHERE s.studentName = :studentName AND s.marked = 0")
-    Page<Object[]> getSAQByStudentName(@Param("studentName")String studentName, Pageable pageable);
-
-    @Query("SELECT DISTINCT s FROM Submission s JOIN FETCH s.question q WHERE s.studentName = :studentName AND s.marked = 1")
-    Page<Object[]> findMarkedByStudentName(String studentName, Pageable pageable);
-
-    @Modifying
-    @Transactional
-    @Query("UPDATE Submission s SET s.marked = :mark WHERE s.studentName = :studentName AND s.question.id = :questionId")
-    void markSubmission(@Param("studentName") String studentName, @Param("questionId") Long questionId, @Param("mark") Integer mark);
+    @Query("""
+            SELECT COUNT(DISTINCT s)
+            FROM Submission s
+            JOIN s.student stu
+            WHERE YEAR(s.targetDate) = :year AND MONTH(s.targetDate) = :month
+            AND stu.name = :name
+            AND s.marked = -1
+            """) // WHERE MARKED -1 OR 1 OR 0
+    Long unmarked(@Param("name") String name, @Param("year") int year, @Param("month") int month);
 }

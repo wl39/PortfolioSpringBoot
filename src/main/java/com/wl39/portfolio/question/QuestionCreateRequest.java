@@ -1,62 +1,35 @@
 package com.wl39.portfolio.question;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.wl39.portfolio.assignment.Assignment;
 import com.wl39.portfolio.candidate.Candidate;
-import jakarta.persistence.*;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
 
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
 import java.util.List;
 
-@Entity
-@Table
-public class Question {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class QuestionCreateRequest {
     private String title;
-    @Column(length = 10000)
     private String question;
     private Character type;
-    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Candidate> candidates;
     private String hint;
-
-    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Assignment> assignments;
-
-    @Column(length = 1000)
     private String answer;
-
-    @Column(length = 2000)
     private String explanation;
     private LocalDateTime generatedDate;
-    public Question() {}
+    private LocalDateTime targetDate;
+    private List<String> candidates;
+    private List<String> students;
 
-    public Question(String title, String question, Character type, List<Candidate> candidates, String hint, List<Assignment> assignments, String answer, String explanation, LocalDateTime generatedDate) {
+    public QuestionCreateRequest() {}
+
+    public QuestionCreateRequest(String title, String question, Character type, String hint, String answer, String explanation, LocalDateTime generatedDate, LocalDateTime targetDate, List<String> candidates, List<String> students) {
         this.title = title;
         this.question = question;
         this.type = type;
-        this.candidates = candidates;
-        this.assignments = assignments;
         this.hint = hint;
         this.answer = answer;
         this.explanation = explanation;
         this.generatedDate = generatedDate;
-    }
-
-    public Long getId() {
-        System.out.println();
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
+        this.targetDate = targetDate;
+        this.candidates = candidates;
+        this.students = students;
     }
 
     public String getTitle() {
@@ -83,26 +56,12 @@ public class Question {
         this.type = type;
     }
 
-    public List<Candidate> getCandidates() {
-        return candidates == null ? new ArrayList<>() : candidates;
-    }
-    public void setCandidates(List<Candidate> candidates) {
-        this.candidates = candidates;
-    }
-
     public String getHint() {
         return hint;
     }
 
     public void setHint(String hint) {
         this.hint = hint;
-    }
-
-    public List<Assignment> getAssignments() {
-        return assignments == null ? new ArrayList<>() : assignments;
-    }
-    public void setAssignments(List<Assignment> assignments) {
-        this.assignments = assignments;
     }
 
     public String getAnswer() {
@@ -129,20 +88,43 @@ public class Question {
         this.generatedDate = generatedDate;
     }
 
+    public LocalDateTime getTargetDate() {
+        return targetDate;
+    }
 
+    public void setTargetDate(LocalDateTime targetDate) {
+        this.targetDate = targetDate;
+    }
+
+    public List<String> getCandidates() {
+        return candidates;
+    }
+
+    public void setCandidates(List<String> candidates) {
+        this.candidates = candidates;
+    }
+
+    public List<String> getStudents() {
+        return students;
+    }
+
+    public void setStudents(List<String> students) {
+        this.students = students;
+    }
 
     @Override
     public String toString() {
-        return "Question{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
+        return "QuestionCreateRequest{" +
+                "title='" + title + '\'' +
                 ", question='" + question + '\'' +
                 ", type=" + type +
-                ", candidates=" + candidates +
                 ", hint='" + hint + '\'' +
                 ", answer='" + answer + '\'' +
                 ", explanation='" + explanation + '\'' +
                 ", generatedDate=" + generatedDate +
+                ", targetDate=" + targetDate +
+                ", candidates=" + candidates +
+                ", students=" + students +
                 '}';
     }
 }

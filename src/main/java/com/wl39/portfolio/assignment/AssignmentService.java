@@ -1,72 +1,76 @@
 package com.wl39.portfolio.assignment;
 
+import com.wl39.portfolio.calendar.CalendarService;
 import com.wl39.portfolio.question.Question;
 import com.wl39.portfolio.question.QuestionRepository;
+import com.wl39.portfolio.question.QuestionService;
+import com.wl39.portfolio.student.Student;
+import com.wl39.portfolio.student.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class AssignmentService {
     private final AssignmentRepository assignmentRepository;
-    private final QuestionRepository questionRepository;
+    private final QuestionService questionService;
+    private final StudentService studentService;
+    private final CalendarService calendarService;
 
     @Autowired
-    public AssignmentService(AssignmentRepository assignmentRepository, QuestionRepository questionRepository) {
+    public AssignmentService(AssignmentRepository assignmentRepository, QuestionService questionService, StudentService studentService, CalendarService calendarService) {
         this.assignmentRepository = assignmentRepository;
-        this.questionRepository = questionRepository;
+        this.questionService = questionService;
+        this.studentService = studentService;
+        this.calendarService = calendarService;
     }
 
-
-    public List<Assignment> getAssignmentsByNameAndYearMonth(String name, int year, int month) {
-        return assignmentRepository.getAssignmentsByNameAndYearMonth(name, year, month);
-    }
-
-    @Transactional // Allows ATOMICITY [If error occurs, everything will be rollback]
-    public List<Long> assignQuestions(AssignmentDTO assignments) {
-        List<Long> savedIds = new ArrayList<>();
-
-        List<String> names = assignments.getNames();
-        List<Long> ids = assignments.getIds();
-        LocalDateTime targetDate = assignments.getTargetDate();
-
-        // Iterate over provided IDs and Names to create assignments
-        for (int i = 0; i < ids.size(); i++) {
-            Long questionId = ids.get(i);
+    @Transactional
+    public void assignQuestions(AssignmentsDTO assignmentsDTO) {
+        List<Assignment> assignments = new ArrayList<>();
 
 
-            // Fetch the Question entity by ID
-            Question question = questionRepository.findById(questionId)
-                    .orElseThrow(() -> new IllegalArgumentException("Question not found for ID: " + questionId));
+        for (String name : assignmentsDTO.getNames()) {
+            Student student = studentService.get(name);
 
+            int ms = 0;
+            int ss = 0;
 
-            for (int j  = 0; j < names.size(); j++) {
-                String name = names.get(j);
+            LocalDate date = assignmentsDTO.getTargetDate().toLocalDate();
 
-                // Create AssignmentID
-                AssignmentID assignmentID = new AssignmentID();
-                assignmentID.setQuestionId(questionId);
-                assignmentID.setName(name);
-                assignmentID.setGeneratedDate(LocalDateTime.now());
+            for (Long id : assignmentsDTO.getQuestionIds()) {
+                Question question = questionService.get(id);
 
-                // Create Assignment
-                Assignment assignment = new Assignment();
-                assignment.setId(assignmentID);
-                assignment.setQuestion(question);
-                assignment.setTargetDate(targetDate);
+                assignments.add(new Assignment(question, student, assignmentsDTO.getTargetDate()));
 
-                // Save Assignment to repository
-                assignmentRepository.save(assignment);
-                savedIds.add(ids.get(i)); // Add the ID to the response list
+                if (question.getType() == 'm') {
+                    ms++;
+                } else {
+                    ss++;
+                }
             }
 
+            calendarService.submitAnswers(student, date, ms, ss);
         }
 
-        return savedIds; // Return the saved IDs as response
+        assignmentRepository.saveAll(assignments);
+    }
+
+    public Assignment assignQuestion(Question question, Student student, LocalDateTime targetDate) {
+        Assignment assignment = new Assignment();
+
+        assignment.setStudent(student);
+        assignment.setQuestion(question);
+        assignment.setTargetDate(targetDate);
+
+        return assignmentRepository.save(assignment);
     }
 }

@@ -12,7 +12,7 @@ public class Candidate {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 10000)
+    @Column(nullable = false, length = 2500)
     private String value;
 
     @ManyToOne

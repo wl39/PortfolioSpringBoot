@@ -2,14 +2,13 @@ package com.wl39.portfolio.submission;
 
 import java.time.LocalDateTime;
 
-public class SubmissionDTO {
+public class SubmissionCreateRequest {
     private Long questionId;
     private String studentAnswer;
     private String studentName;
     private LocalDateTime submitDate;
-    private Boolean marked = true;
 
-    public SubmissionDTO(Long questionId, String studentAnswer, String studentName, LocalDateTime submitDate) {
+    public SubmissionCreateRequest(Long questionId, String studentAnswer, String studentName, LocalDateTime submitDate) {
         this.questionId = questionId;
         this.studentAnswer = studentAnswer;
         this.studentName = studentName;
@@ -46,13 +45,5 @@ public class SubmissionDTO {
 
     public void setSubmitDate(LocalDateTime submitDate) {
         this.submitDate = submitDate;
-    }
-
-    public Boolean getMarked() {
-        return marked;
-    }
-
-    public void setMarked(Boolean marked) {
-        this.marked = marked;
     }
 }

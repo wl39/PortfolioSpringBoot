@@ -1,14 +1,19 @@
-package com.wl39.portfolio.question;
+package com.wl39.portfolio.assignment;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-public class QuestionsPostStudentsDTO {
+public class AssignmentsDTO {
     private List<Long> questionIds;
-    private List<String> studentsFor;
+    private List<String> names;
     private LocalDateTime targetDate;
 
-    // Getters and setters
+    public AssignmentsDTO(List<Long> questionIds, List<String> names, LocalDateTime targetDate) {
+        this.questionIds = questionIds;
+        this.names = names;
+        this.targetDate = targetDate;
+    }
+
     public List<Long> getQuestionIds() {
         return questionIds;
     }
@@ -17,12 +22,12 @@ public class QuestionsPostStudentsDTO {
         this.questionIds = questionIds;
     }
 
-    public List<String> getStudentsFor() {
-        return studentsFor;
+    public List<String> getNames() {
+        return names;
     }
 
-    public void setStudentsFor(List<String> studentsFor) {
-        this.studentsFor = studentsFor;
+    public void setNames(List<String> names) {
+        this.names = names;
     }
 
     public LocalDateTime getTargetDate() {
