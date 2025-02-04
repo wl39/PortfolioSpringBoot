@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:3000")
 @RequestMapping(path = "api/v1/submissions")
 public class SubmissionController {
     private final SubmissionService submissionService;

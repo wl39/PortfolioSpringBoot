@@ -8,7 +8,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:3000")
 @RequestMapping(path = "api/v1/simple_math")
 public class SimpleSubmissionController {
     private final SimpleSubmissionService simpleSubmissionService;

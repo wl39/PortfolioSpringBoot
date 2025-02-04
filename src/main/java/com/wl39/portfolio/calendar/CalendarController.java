@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@CrossOrigin(origins="http://localhost:3000")
 @RequestMapping(path = "api/v1/calendars")
 public class CalendarController {
     private final CalendarService calendarService;
