@@ -58,7 +58,7 @@ public class AssignmentService {
                 }
             }
 
-            calendarService.submitAnswers(student, date, ms, ss);
+            calendarService.assignNewQuestions(student, date, assignmentsDTO.getQuestionIds().size());
         }
 
         assignmentRepository.saveAll(assignments);
