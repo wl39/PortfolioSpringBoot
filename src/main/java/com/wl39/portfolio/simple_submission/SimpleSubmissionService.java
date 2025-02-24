@@ -35,4 +35,24 @@ public class SimpleSubmissionService {
     public Long getCounts(String name, LocalDate submitDate) {
         return this.simpleSubmissionRepository.countByNameAndSubmitDate(name, submitDate);
     }
+
+    public Long getWrongCounts(String name) {
+        return this.simpleSubmissionRepository.countByNameAndAnswer(name, "-1");
+    }
+
+    public Long getRightCounts(String name) {
+        return this.simpleSubmissionRepository.countByNameAndAnswerNot(name, "-1");
+    }
+
+    public Long getWrongCounts(String name, LocalDate submitDate) {
+        return this.simpleSubmissionRepository.countByNameAndAnswerAndSubmitDate(name, "-1", submitDate);
+    }
+
+    public Long getRightCounts(String name, LocalDate submitDate) {
+        return this.simpleSubmissionRepository.countByNameAndAnswerNotAndSubmitDate(name, "-1", submitDate);
+    }
+
+    public Page<SimpleSubmissionDayCount> getDayCountsByName(Pageable pageable, String name) {
+        return this.simpleSubmissionRepository.getDayCountsByName(pageable, name);
+    }
 }

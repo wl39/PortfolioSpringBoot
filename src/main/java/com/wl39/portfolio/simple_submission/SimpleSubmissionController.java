@@ -37,4 +37,29 @@ public class SimpleSubmissionController {
     public Long getCounts(@RequestParam String name, @RequestParam LocalDate submitDate) {
         return this.simpleSubmissionService.getCounts(name, submitDate);
     }
+
+    @GetMapping("/count/wrong")
+    public Long getWrongCounts(@RequestParam String name) {
+        return this.simpleSubmissionService.getWrongCounts(name);
+    }
+
+    @GetMapping("/count/right")
+    public Long getRightCounts(@RequestParam String name) {
+        return this.simpleSubmissionService.getRightCounts(name);
+    }
+
+    @GetMapping("/day_count/wrong")
+    public Long getWrongCounts(@RequestParam String name, @RequestParam LocalDate submitDate) {
+        return this.simpleSubmissionService.getWrongCounts(name, submitDate);
+    }
+
+    @GetMapping("/day_ count/right")
+    public Long getRightCounts(@RequestParam String name, @RequestParam LocalDate submitDate) {
+        return this.simpleSubmissionService.getRightCounts(name, submitDate);
+    }
+
+    @GetMapping("/day_counts/page/wrong")
+    public Page<SimpleSubmissionDayCount> getDayCountsByName(Pageable pageable, @RequestParam String name) {
+        return this.simpleSubmissionService.getDayCountsByName(pageable, name);
+    }
 }
