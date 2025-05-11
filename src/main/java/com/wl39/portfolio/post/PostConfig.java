@@ -1,7 +1,5 @@
 package com.wl39.portfolio.post;
 
-import com.wl39.portfolio.user.User;
-import com.wl39.portfolio.user.UserRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

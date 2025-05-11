@@ -1,52 +1,58 @@
 package com.wl39.portfolio.user;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
-import java.util.Optional;
 
 @Service
-public class UserService {
+public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
-    private final MessageDigest messageDigest;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
-        try {
-            this.messageDigest = MessageDigest.getInstance("MD5");
-        } catch (NoSuchAlgorithmException e) {
-            throw new IllegalStateException("ALGORITHM ERROR");
-        }
+        this.passwordEncoder = passwordEncoder;
     }
 
-    public void signUpUser(String username, String password) {
-        Optional<User> userOptional = this.userRepository.findUserByUsername(username);
 
-        if (userOptional.isPresent()) {
-            throw new IllegalStateException(username + " is already taken");
-        }
 
-        byte[] hashPassword = messageDigest.digest(password.getBytes());
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        UserEntity user = userRepository.findByEmail(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + username));
 
-        userRepository.save(new User(username, hashPassword));
+        return User.builder()
+                .username(user.getEmail())
+                .password(user.getPassword())
+                .roles(user.getRole())
+                .build();
     }
 
-    public void loginUser(String username, String password) {
-        Optional<byte[]> passwordOptional = this.userRepository.findPasswordByUsername(username);
+    public UserEntity findByEmail(String username) {
+        return userRepository.findByEmail(username).orElseThrow();
+    }
 
-        if (passwordOptional.isPresent()) {
-            byte[] hashPassword = messageDigest.digest(password.getBytes());
-
-            if (!Arrays.equals(hashPassword, passwordOptional.get())) {
-                throw new IllegalStateException("LOGIN FAIL!");
-            }
-        } else {
-            throw new IllegalStateException("NO CERTAIN USER");
+    public ResponseEntity<String> signup(SignupRequest signupRequest) {
+        if (userRepository.findByEmail(signupRequest.getEmail()).isPresent()) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Email is already in use!");
         }
 
+        UserEntity user = new UserEntity();
+        user.setUsername(signupRequest.getUsername());
+        user.setEmail(signupRequest.getEmail());
+        user.setPassword(passwordEncoder.encode(signupRequest.getPassword()));
+
+        userRepository.save(user);
+
+        return ResponseEntity.ok("Signup successful!");
     }
 }

@@ -22,6 +22,7 @@ public class Submission {
     @JoinColumn(name = "student_id")
     private Student student;
 
+    @Column(length = 10000)
     private String studentAnswer;
     private LocalDateTime submitDate;
     private LocalDateTime targetDate;
