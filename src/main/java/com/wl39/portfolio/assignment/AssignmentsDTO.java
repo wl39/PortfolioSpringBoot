@@ -1,11 +1,17 @@
 package com.wl39.portfolio.assignment;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
 public class AssignmentsDTO {
+    @NotNull
     private List<Long> questionIds;
+    @NotNull
     private List<String> names;
+    @NotNull
     private LocalDateTime targetDate;
 
     public AssignmentsDTO(List<Long> questionIds, List<String> names, LocalDateTime targetDate) {

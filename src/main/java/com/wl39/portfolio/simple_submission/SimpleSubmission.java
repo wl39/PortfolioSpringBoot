@@ -1,6 +1,8 @@
 package com.wl39.portfolio.simple_submission;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -11,9 +13,13 @@ public class SimpleSubmission {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @NotBlank
     private String name;
+    @NotBlank
     private String question;
+    @NotBlank
     private String answer;
+    @NotNull
     private LocalDateTime submitDate;
 
     public SimpleSubmission(String name, String question, String answer, LocalDateTime submitDate) {

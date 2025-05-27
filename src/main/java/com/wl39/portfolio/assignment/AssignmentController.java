@@ -1,5 +1,6 @@
 package com.wl39.portfolio.assignment;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,7 +15,7 @@ public class AssignmentController {
     }
 
     @PostMapping
-    public void assignQuestions(@RequestBody AssignmentsDTO assignmentsDTO) {
+    public void assignQuestions(@RequestBody @Valid AssignmentsDTO assignmentsDTO) {
         assignmentService.assignQuestions(assignmentsDTO);
     }
 }

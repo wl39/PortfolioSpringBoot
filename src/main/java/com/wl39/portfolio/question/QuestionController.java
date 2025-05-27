@@ -3,13 +3,16 @@ package com.wl39.portfolio.question;
 import com.wl39.portfolio.user.CustomUserPrincipal;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -17,6 +20,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping(path = "api/v1/questions")
+@Validated
 public class QuestionController {
     private final QuestionService questionService;
 
@@ -26,12 +30,12 @@ public class QuestionController {
     }
 
     @PostMapping
-    public Long postQuestion(@RequestBody QuestionCreateRequest questionCreateRequest) {
+    public Long postQuestion(@RequestBody @Valid QuestionCreateRequest questionCreateRequest) {
         return questionService.postQuestion(questionCreateRequest);
     }
 
     @PostMapping("/multiples")
-    public Long postQuestions(@RequestBody List<QuestionCreateRequest> questionCreateRequest) {
+    public Long postQuestions(@RequestBody List<@Valid QuestionCreateRequest> questionCreateRequest) {
         return questionService.postQuestions(questionCreateRequest);
     }
 
@@ -41,17 +45,19 @@ public class QuestionController {
     }
 
     @GetMapping("student/{name}")
-    public Page<Question> getOptimizedQuestionsPage(Pageable pageable, @PathVariable String name, Authentication authentication) {
+    public ResponseEntity<?> getOptimizedQuestionsPage(Pageable pageable, @PathVariable String name, Authentication authentication) {
         CustomUserPrincipal user = (CustomUserPrincipal) authentication.getPrincipal();
         boolean isAdmin = authentication.getAuthorities().stream()
                 .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"));
 
         if (!isAdmin && !user.getUsername().equals(name)) {
-            System.out.println("gas");
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Access Denied");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access Denied");
         }
 
-        return questionService.getOptimizedQuestionsPage(pageable, name);
+        Page<Question> page = questionService.getOptimizedQuestionsPage(pageable, name);
+
+
+        return page.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(page);
     }
 
     @GetMapping

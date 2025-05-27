@@ -1,21 +1,43 @@
 package com.wl39.portfolio.question;
 
 import com.wl39.portfolio.candidate.Candidate;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 public class QuestionCreateRequest {
+
+    @NotBlank(message = "Title must not be blank")
     private String title;
+
+    @NotBlank(message = "Question must not be blank")
     private String question;
+
+    @NotNull(message = "Type must not be null")
     private Character type;
+
     private String hint;
+
+    @NotBlank(message = "Answer must not be blank")
     private String answer;
+
+    @NotBlank(message = "Explanation must not be blank")
     private String explanation;
+
+    @NotNull(message = "Generated date must not be null")
     private LocalDateTime generatedDate;
+
+    @NotNull(message = "Target date must not be null")
     private LocalDateTime targetDate;
+
+    @NotNull(message = "Candidates list must not be null")
     private List<String> candidates;
+
+    @NotNull(message = "Students list must not be null")
     private List<String> students;
+
 
     public QuestionCreateRequest() {}
 

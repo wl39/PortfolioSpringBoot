@@ -1,7 +1,9 @@
 package com.wl39.portfolio.simple_submission;
 
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -22,7 +24,7 @@ public class SimpleSubmissionController {
     }
 
     @PostMapping
-    public Long uploadSimpleSubmission(@RequestBody SimpleSubmission simpleSubmission) {
+    public Long uploadSimpleSubmission(@RequestBody @Valid SimpleSubmission simpleSubmission) {
         this.simpleSubmissionService.uploadSubmission(simpleSubmission);
 
         return simpleSubmission.getId();
