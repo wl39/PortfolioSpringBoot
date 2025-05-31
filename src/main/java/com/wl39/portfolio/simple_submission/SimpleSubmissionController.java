@@ -60,7 +60,7 @@ public class SimpleSubmissionController {
         return this.simpleSubmissionService.getRightCounts(name, submitDate);
     }
 
-    @GetMapping("/day_counts/page/wrong")
+    @GetMapping("/day_counts/page")
     public Page<SimpleSubmissionDayCount> getDayCountsByName(Pageable pageable, @RequestParam String name) {
         return this.simpleSubmissionService.getDayCountsByName(pageable, name);
     }

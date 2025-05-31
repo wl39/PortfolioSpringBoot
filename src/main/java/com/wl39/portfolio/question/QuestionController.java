@@ -39,6 +39,11 @@ public class QuestionController {
         return questionService.postQuestions(questionCreateRequest);
     }
 
+    @PatchMapping("/multiples")
+    public ResponseEntity<?> patchQuestions(@RequestBody List<@Valid QuestionUpdateRequest> questionUpdateRequests) {
+        return questionService.patchQuestions(questionUpdateRequests);
+    }
+
     @GetMapping("/{name}")
     public Page<Question> getQuestionsPage(Pageable pageable, @PathVariable String name) {
         return questionService.getQuestionsPage(pageable, name);
