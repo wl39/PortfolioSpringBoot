@@ -1,12 +1,14 @@
 package com.wl39.portfolio.student;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.wl39.portfolio.assignment.Assignment;
 import com.wl39.portfolio.calendar.Calendar;
 import com.wl39.portfolio.submission.Submission;
+import com.wl39.portfolio.subscription.StudentServiceSubscription;
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.HashSet;
 
@@ -29,6 +31,9 @@ public class Student {
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private Set<Calendar> calendars = new HashSet<>();
+
+    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<StudentServiceSubscription> subscriptions = new ArrayList<>();
 
     public Student() {}
 
@@ -82,5 +87,13 @@ public class Student {
 
     public void setCalendars(Set<Calendar> calendars) {
         this.calendars = calendars;
+    }
+
+    public List<StudentServiceSubscription> getSubscriptions() {
+        return subscriptions;
+    }
+
+    public void setSubscriptions(List<StudentServiceSubscription> subscriptions) {
+        this.subscriptions = subscriptions;
     }
 }

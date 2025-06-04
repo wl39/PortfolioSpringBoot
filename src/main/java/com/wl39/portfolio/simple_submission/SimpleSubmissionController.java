@@ -1,8 +1,12 @@
 package com.wl39.portfolio.simple_submission;
 
+import com.wl39.portfolio.user.CustomUserPrincipal;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -61,7 +65,16 @@ public class SimpleSubmissionController {
     }
 
     @GetMapping("/day_counts/page")
-    public Page<SimpleSubmissionDayCount> getDayCountsByName(Pageable pageable, @RequestParam String name) {
-        return this.simpleSubmissionService.getDayCountsByName(pageable, name);
+    public ResponseEntity<?> getDayCountsByName(Pageable pageable, @RequestParam String name, Authentication authentication) {
+        CustomUserPrincipal user = (CustomUserPrincipal) authentication.getPrincipal();
+
+        boolean isAdmin = authentication.getAuthorities().stream()
+                .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"));
+
+        if (!isAdmin && !user.getUsername().equals(name)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access Denied");
+        }
+
+        return ResponseEntity.ok(this.simpleSubmissionService.getDayCountsByName(pageable, name));
     }
 }
