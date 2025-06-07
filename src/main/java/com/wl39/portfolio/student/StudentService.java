@@ -36,4 +36,8 @@ public class StudentService {
             return studentRepository.save(s);
         });
     }
+
+    public List<Student> get() {
+        return studentRepository.findAll();
+    }
 }

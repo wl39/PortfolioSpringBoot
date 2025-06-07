@@ -43,4 +43,9 @@ public class StudentController {
 
         return studentCalendars;
     }
+
+    @GetMapping
+    public List<Student> get() {
+        return studentService.get();
+    }
 }

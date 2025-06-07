@@ -72,6 +72,7 @@ public class WebSecurityConfig {
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/api/v1/users/login", "/api/v1/users/signup").permitAll()
 //                        .requestMatchers("/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/**").hasAnyRole("ADMIN", "TEACHER")
                         .requestMatchers(HttpMethod.POST, "/api/v1/questions/**").hasAnyRole("ADMIN", "TEACHER")
                         .requestMatchers(HttpMethod.POST, "/api/v1/subscriptions/**").hasAnyRole("ADMIN", "TEACHER")
                         .requestMatchers(HttpMethod.POST, "/api/v1/services/**").hasAnyRole("ADMIN", "TEACHER")

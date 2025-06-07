@@ -15,6 +15,7 @@ public class ServiceService {
     public ResponseEntity<?> postService(String name) {
         com.wl39.portfolio.services.Service service = new com.wl39.portfolio.services.Service();
 
+        System.out.println(name);
         service.setName(name);
 
         return ResponseEntity.ok(serviceRepository.save(service));

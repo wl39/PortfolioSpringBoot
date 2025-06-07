@@ -8,6 +8,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("api/v1/subscriptions")
 @RequiredArgsConstructor
@@ -17,6 +19,11 @@ public class StudentServiceSubscriptionController {
     @PostMapping
     public ResponseEntity<?> postSubscription(@RequestBody @Valid SubscriptionRequest subscriptionRequest) {
         return studentServiceSubscriptionService.postSubscription(subscriptionRequest);
+    }
+
+    @PostMapping(path = "/multiples")
+    public ResponseEntity<?> postSubscriptions(@RequestBody List<@Valid SubscriptionRequest> subscriptionRequests) {
+        return studentServiceSubscriptionService.postSubscription(subscriptionRequests);
     }
 
     @GetMapping

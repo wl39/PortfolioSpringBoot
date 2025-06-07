@@ -37,6 +37,13 @@ public class StudentServiceSubscriptionService {
 
         return ResponseEntity.ok(1);
     }
+    public ResponseEntity<?> postSubscription(List<SubscriptionRequest> subscriptionRequests) {
+        List<StudentServiceSubscription> studentServiceSubscriptions = new ArrayList<>();
+
+        subscriptionRequests.forEach(this::postSubscription);
+
+        return ResponseEntity.ok(subscriptionRequests.size());
+    }
 
     public ResponseEntity<?> getSubscriptions(String name) {
         Student student = studentRepository.findByName(name).orElseThrow(
@@ -51,4 +58,5 @@ public class StudentServiceSubscriptionService {
 
         return ResponseEntity.ok(subscriptions);
     }
+
 }

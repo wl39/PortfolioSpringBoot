@@ -1,5 +1,6 @@
 package com.wl39.portfolio.services;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.wl39.portfolio.subscription.StudentServiceSubscription;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -26,5 +27,6 @@ public class Service {
     public String name;
 
     @OneToMany(mappedBy = "service", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<StudentServiceSubscription> subscriptions = new ArrayList<>();
 }

@@ -28,6 +28,5 @@ public class StudentServiceSubscription {
 
     @ManyToOne
     @JoinColumn(name = "service_id", nullable = false)
-    @JsonIgnore
     private Service service;
 }
