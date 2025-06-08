@@ -14,6 +14,10 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ResponseStatusException.class)
     public ResponseEntity<String> handleResponseStatus(ResponseStatusException ex) {
+        System.out.println("ResponseStatusException occurs!");
+        System.out.println("Status: " + ex.getStatusCode());
+        System.out.println("Reason: " + ex.getReason());
+
         return ResponseEntity
                 .status(ex.getStatusCode())
                 .body(ex.getReason());
