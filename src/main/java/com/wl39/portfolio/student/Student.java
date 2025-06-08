@@ -5,6 +5,7 @@ import com.wl39.portfolio.assignment.Assignment;
 import com.wl39.portfolio.calendar.Calendar;
 import com.wl39.portfolio.submission.Submission;
 import com.wl39.portfolio.subscription.StudentServiceSubscription;
+import com.wl39.portfolio.user.UserEntity;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
@@ -20,6 +21,9 @@ public class Student {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;  // 학생 이름
+    @OneToOne(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private UserEntity user;
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private Set<Assignment> assignments = new HashSet<>();
@@ -95,5 +99,13 @@ public class Student {
 
     public void setSubscriptions(List<StudentServiceSubscription> subscriptions) {
         this.subscriptions = subscriptions;
+    }
+
+    public UserEntity getUser() {
+        return user;
+    }
+
+    public void setUser(UserEntity user) {
+        this.user = user;
     }
 }

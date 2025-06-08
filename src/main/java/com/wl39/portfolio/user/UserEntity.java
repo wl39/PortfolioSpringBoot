@@ -1,5 +1,6 @@
 package com.wl39.portfolio.user;
 
+import com.wl39.portfolio.student.Student;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,4 +28,8 @@ public class UserEntity {
 
     @Column(nullable = false)
     private String role = "STUDENT";
+
+    @OneToOne
+    @JoinColumn(name = "student_id", nullable = false)
+    private Student student;
 }

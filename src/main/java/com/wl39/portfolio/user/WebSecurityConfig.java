@@ -71,21 +71,23 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/api/v1/users/login", "/api/v1/users/signup").permitAll()
-//                        .requestMatchers("/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/questions/student/**").hasAnyRole("ADMIN", "STUDENT", "TEACHER")
+                        .requestMatchers(HttpMethod.GET, "/api/v1/submissions/**").hasAnyRole("ADMIN", "STUDENT", "TEACHER")
+                        .requestMatchers(HttpMethod.POST, "/api/v1/submissions/**").hasAnyRole("ADMIN", "STUDENT", "TEACHER")
+                        .requestMatchers(HttpMethod.GET, "/api/v1/simple_math/**").hasAnyRole("ADMIN", "STUDENT", "TEACHER")
+                        .requestMatchers(HttpMethod.POST, "/api/v1/simple_math/**").hasAnyRole("ADMIN", "STUDENT", "TEACHER")
+                        .requestMatchers(HttpMethod.GET, "/api/v1/subscriptions/**").hasAnyRole("ADMIN", "STUDENT", "TEACHER")
+
+
+                        .requestMatchers("/api/v1/teacher", "/api/v1/calendar/**").hasAnyRole("ADMIN", "TEACHER")
+                        .requestMatchers(HttpMethod.GET, "/api/v1/questions/**").hasAnyRole("ADMIN", "TEACHER")
                         .requestMatchers(HttpMethod.POST, "/api/v1/questions/**").hasAnyRole("ADMIN", "TEACHER")
                         .requestMatchers(HttpMethod.POST, "/api/v1/subscriptions/**").hasAnyRole("ADMIN", "TEACHER")
                         .requestMatchers(HttpMethod.POST, "/api/v1/services/**").hasAnyRole("ADMIN", "TEACHER")
                         .requestMatchers(HttpMethod.PATCH, "/api/v1/questions/**").hasAnyRole("ADMIN", "TEACHER")
-                        .requestMatchers(HttpMethod.GET, "/api/v1/questions/student/**").hasAnyRole("ADMIN", "STUDENT", "TEACHER")
-                        .requestMatchers(HttpMethod.GET, "/api/v1/subscriptions/**").hasAnyRole("ADMIN", "STUDENT", "TEACHER")
-                        .requestMatchers(HttpMethod.GET, "/api/v1/simple_math/**").hasAnyRole("ADMIN", "STUDENT", "TEACHER")
-                        .requestMatchers(HttpMethod.POST, "/api/v1/simple_math/**").hasAnyRole("ADMIN", "STUDENT", "TEACHER")
-                        .requestMatchers(HttpMethod.GET, "/api/v1/submissions/**").hasAnyRole("ADMIN", "STUDENT", "TEACHER")
-                        .requestMatchers(HttpMethod.POST, "/api/v1/submissions/**").hasAnyRole("ADMIN", "STUDENT", "TEACHER")
-                        .requestMatchers(HttpMethod.GET, "/api/v1/questions/**").hasAnyRole("ADMIN", "TEACHER")
+
                         .requestMatchers(HttpMethod.GET, "/api/v1/**").hasAnyRole("ADMIN", "TEACHER")
 
-                        .requestMatchers("/api/v1/teacher", "/api/v1/calendar/**").hasAnyRole("ADMIN", "TEACHER")
                         .requestMatchers("/api/v1/**").hasRole("ADMIN")
                         .anyRequest().authenticated())
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)

@@ -21,4 +21,5 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
             AND s.name = :name
             """)
     List<Student> findAssignmentsAndSubmissionsByName(String name, int year, int month);
+    boolean existsByName(String name);
 }

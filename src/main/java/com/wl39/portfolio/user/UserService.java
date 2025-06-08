@@ -1,5 +1,7 @@
 package com.wl39.portfolio.user;
 
+import com.wl39.portfolio.student.Student;
+import com.wl39.portfolio.student.StudentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,15 +13,19 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.UUID;
+
 
 @Service
 public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
+    private final StudentRepository studentRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, StudentRepository studentRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.studentRepository = studentRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -46,13 +52,34 @@ public class UserService implements UserDetailsService {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Email is already in use!");
         }
 
+        // 1. 유니크한 사용자 이름 생성
+        String newUsername = generateUniqueUsername(signupRequest.getUsername());
+
+        // 2. Student 생성 및 저장
+        Student student = new Student(newUsername);
+        studentRepository.save(student);
+
+        // 3. UserEntity 생성 및 연결
         UserEntity user = new UserEntity();
-        user.setUsername(signupRequest.getUsername());
+        user.setUsername(newUsername); // 유니크 이름 사용
         user.setEmail(signupRequest.getEmail());
         user.setPassword(passwordEncoder.encode(signupRequest.getPassword()));
+        user.setStudent(student); //
 
         userRepository.save(user);
 
         return ResponseEntity.ok("Signup successful!");
     }
+
+    private String generateUniqueUsername(String baseUsername) {
+        String username = baseUsername;
+
+        while (studentRepository.existsByName(username)) {
+            String uuidSuffix = UUID.randomUUID().toString().substring(0, 8);
+            username = baseUsername + "_" + uuidSuffix;
+        }
+
+        return username;
+    }
+
 }
