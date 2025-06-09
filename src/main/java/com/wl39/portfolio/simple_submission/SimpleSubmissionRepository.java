@@ -1,5 +1,6 @@
 package com.wl39.portfolio.simple_submission;
 
+import com.wl39.portfolio.submission.SubmissionDayCount;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -24,11 +25,11 @@ public interface SimpleSubmissionRepository extends JpaRepository<SimpleSubmissi
     long countByNameAndSubmitDate(@Param("name") String name, @Param("date") LocalDate submitDate);
 
     //SELECT name, count(answer) as questions, DATE(submit_date) as date  FROM simple_submission ss WHERE answer = "-1" GROUP BY DATE(submit_date);
-    @Query("SELECT new com.wl39.portfolio.simple_submission.SimpleSubmissionDayCount(" +
+    @Query("SELECT new com.wl39.portfolio.submission.SubmissionDayCount(" +
             "       s.name, SUM(CASE WHEN s.answer = '-1' THEN 1 ELSE 0 END), SUM(CASE WHEN s.answer <> '-1' THEN 1 ELSE 0 END), FUNCTION('date', s.submitDate)) " +
             "FROM SimpleSubmission s " +
             "WHERE s.name = :name " +
             "GROUP BY FUNCTION('date', s.submitDate)")
-    Page<SimpleSubmissionDayCount> getDayCountsByName(Pageable pageable, @Param("name") String name);
+    Page<SubmissionDayCount> getDayCountsByName(Pageable pageable, @Param("name") String name);
 
 }

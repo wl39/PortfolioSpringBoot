@@ -72,4 +72,8 @@ public class UserController {
                 "username: " + user.getUsername() + ", role: " + (isAdmin ? "ADMIN" : "USER"));
     }
 
+    @GetMapping
+    public ResponseEntity<?> getAllUsers() {
+        return ResponseEntity.ok(userService.getAllUsers());
+    }
 }

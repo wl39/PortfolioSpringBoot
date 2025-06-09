@@ -1,15 +1,15 @@
-package com.wl39.portfolio.simple_submission;
+package com.wl39.portfolio.submission;
 
 import java.sql.Date;
 import java.time.LocalDate;
 
-public class SimpleSubmissionDayCount {
+public class SubmissionDayCount {
     public String name;
     public Long wrongCounts;
     public Long correctCounts;
     public LocalDate date;
 
-    public SimpleSubmissionDayCount(String name, Long wrongCounts, Long correctCounts, Date date) {
+    public SubmissionDayCount(String name, Long wrongCounts, Long correctCounts, Date date) {
         this.name = name;
         this.wrongCounts = wrongCounts;
         this.correctCounts = correctCounts;

@@ -1,5 +1,6 @@
 package com.wl39.portfolio.simple_submission;
 
+import com.wl39.portfolio.submission.SubmissionDayCount;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -52,7 +53,7 @@ public class SimpleSubmissionService {
         return this.simpleSubmissionRepository.countByNameAndAnswerNotAndSubmitDate(name, "-1", submitDate);
     }
 
-    public Page<SimpleSubmissionDayCount> getDayCountsByName(Pageable pageable, String name) {
+    public Page<SubmissionDayCount> getDayCountsByName(Pageable pageable, String name) {
         return this.simpleSubmissionRepository.getDayCountsByName(pageable, name);
     }
 }
