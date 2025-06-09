@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
 public interface SimpleSubmissionRepository extends JpaRepository<SimpleSubmission, Long> {
     long countByName(String name);
@@ -32,4 +33,18 @@ public interface SimpleSubmissionRepository extends JpaRepository<SimpleSubmissi
             "GROUP BY FUNCTION('date', s.submitDate)")
     Page<SubmissionDayCount> getDayCountsByName(Pageable pageable, @Param("name") String name);
 
+    @Query("""
+            SELECT new com.wl39.portfolio.submission.SubmissionDayCount(
+            s.name, SUM(CASE WHEN s.answer = '-1' THEN 1 ELSE 0 END), SUM(CASE WHEN s.answer <> '-1' THEN 1 ELSE 0 END), FUNCTION('date', s.submitDate))
+            FROM SimpleSubmission s
+            WHERE s.name = :name AND FUNCTION('date', s.submitDate) = :date
+            """)
+    SubmissionDayCount getLatestSubmissionDayCountsByName(@Param("name") String name, @Param("date") LocalDate date);
+
+    @Query("""
+        SELECT FUNCTION('date', MAX(s.submitDate))
+        FROM SimpleSubmission s
+        WHERE s.name = :name
+    """)
+    Optional<LocalDate> findLatestSubmitDateByName(@Param("name") String name);
 }

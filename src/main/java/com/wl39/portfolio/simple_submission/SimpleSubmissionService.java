@@ -4,7 +4,10 @@ import com.wl39.portfolio.submission.SubmissionDayCount;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -55,5 +58,13 @@ public class SimpleSubmissionService {
 
     public Page<SubmissionDayCount> getDayCountsByName(Pageable pageable, String name) {
         return this.simpleSubmissionRepository.getDayCountsByName(pageable, name);
+    }
+
+    public ResponseEntity<?> getLatestSubmissionDayCountsByName(String name) {
+        LocalDate date = simpleSubmissionRepository.findLatestSubmitDateByName(name).orElseThrow(() ->
+                new ResponseStatusException(HttpStatus.NOT_FOUND, "Either date or student not found")
+        );
+
+        return ResponseEntity.ok(simpleSubmissionRepository.getLatestSubmissionDayCountsByName(name, date));
     }
 }

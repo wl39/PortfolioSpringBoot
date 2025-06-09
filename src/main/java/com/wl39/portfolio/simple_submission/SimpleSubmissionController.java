@@ -77,4 +77,18 @@ public class SimpleSubmissionController {
 
         return ResponseEntity.ok(this.simpleSubmissionService.getDayCountsByName(pageable, name));
     }
+
+    @GetMapping("/day_counts/latest")
+    public ResponseEntity<?> getLatestSubmissionDayCountsAutoByName(@RequestParam String name, Authentication authentication) {
+        CustomUserPrincipal user = (CustomUserPrincipal) authentication.getPrincipal();
+
+        boolean isAdmin = authentication.getAuthorities().stream()
+                .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"));
+
+        if (!isAdmin && !user.getUsername().equals(name)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access Denied");
+        }
+
+        return this.simpleSubmissionService.getLatestSubmissionDayCountsByName(name);
+    }
 }
