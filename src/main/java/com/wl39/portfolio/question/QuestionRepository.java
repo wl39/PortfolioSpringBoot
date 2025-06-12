@@ -20,4 +20,6 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
 """)
     Page<Question> findByStudentNameFetchAssignments(Pageable pageable, @Param("studentName") String studentName);
     Page<Question> findByAssignments_Student_Name(Pageable pageable, String name);
+
+    Page<Question> findByTitle(Pageable pageable, String title);
 }

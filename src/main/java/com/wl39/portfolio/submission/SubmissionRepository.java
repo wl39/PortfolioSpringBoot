@@ -67,4 +67,5 @@ public interface SubmissionRepository extends JpaRepository<Submission, Long> {
     Optional<LocalDate> findLatestSubmitDateByName(@Param("name") String name);
 
 
+    List<Submission> findByStudentName(String name);
 }

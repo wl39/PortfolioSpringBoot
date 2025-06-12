@@ -5,9 +5,11 @@ import com.wl39.portfolio.question.Question;
 import com.wl39.portfolio.question.QuestionOnly;
 import com.wl39.portfolio.student.Student;
 import jakarta.persistence.*;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
+@NoArgsConstructor
 public class SubmissionQuestion {
     private Long id;
 
@@ -37,7 +39,8 @@ public class SubmissionQuestion {
                 question.getHint(),
                 question.getAnswer(),
                 question.getExplanation(),
-                question.getGeneratedDate()
+                question.getGeneratedDate(),
+                question.getTopics()
         );;
         this.studentAnswer = studentAnswer;
         this.submitDate = submitDate;
@@ -70,7 +73,8 @@ public class SubmissionQuestion {
                 question.getHint(),
                 question.getAnswer(),
                 question.getExplanation(),
-                question.getGeneratedDate()
+                question.getGeneratedDate(),
+                question.getTopics()
         );
     }
 

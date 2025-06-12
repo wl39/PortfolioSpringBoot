@@ -69,4 +69,19 @@ public class QuestionController {
     public Page<QuestionOnly> getAllQuestionsPage(Pageable pageable) {
         return questionService.getAllQuestionsPage(pageable);
     }
+
+    @GetMapping("topics")
+    public ResponseEntity<?> getTopics(Pageable pageable) {
+        return  ResponseEntity.ok(questionService.getAllQuestionTopics(pageable));
+    }
+
+    @PatchMapping("topics")
+    public ResponseEntity<?> patchTopics(@RequestBody @Valid UpdateQuestionTopicsRequest updateQuestionTopicsRequest) {
+        return questionService.patchTopics(updateQuestionTopicsRequest);
+    }
+
+    @GetMapping("topics/search")
+    public ResponseEntity<?> getTopicsWithTitle(Pageable pageable, @RequestParam String title) {
+        return ResponseEntity.ok(questionService.getTopicsWithTitle(pageable, title));
+    }
 }

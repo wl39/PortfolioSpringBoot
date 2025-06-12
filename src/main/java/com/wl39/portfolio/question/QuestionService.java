@@ -6,6 +6,10 @@ import com.wl39.portfolio.candidate.Candidate;
 import com.wl39.portfolio.student.Student;
 import com.wl39.portfolio.student.StudentRepository;
 import com.wl39.portfolio.student.StudentService;
+import com.wl39.portfolio.topic.Topic;
+import com.wl39.portfolio.topic.TopicRepository;
+import jakarta.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,23 +19,17 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class QuestionService {
     private final QuestionRepository questionRepository;
     private final StudentService studentService;
     private final CalendarService calendarService;
+    private final TopicRepository topicRepository;
 
-    @Autowired
-    public QuestionService(QuestionRepository questionRepository, StudentService studentService, CalendarService calendarService) {
-        this.questionRepository = questionRepository;
-        this.studentService = studentService;
-        this.calendarService = calendarService;
-    }
 
     @Transactional
     public Long postQuestion(QuestionCreateRequest questionCreateRequest) {
@@ -94,16 +92,17 @@ public class QuestionService {
         Page<Question> questions = questionRepository.findAll(pageable);
 
         return questions.map((question) ->
-            new QuestionOnly(
-                    question.getId(),
-                    question.getTitle(),
-                    question.getQuestion(),
-                    question.getType(),
-                    question.getCandidates(),
-                    question.getHint(),
-                    question.getAnswer(),
-                    question.getExplanation(),
-                    question.getGeneratedDate())
+                new QuestionOnly(
+                        question.getId(),
+                        question.getTitle(),
+                        question.getQuestion(),
+                        question.getType(),
+                        question.getCandidates(),
+                        question.getHint(),
+                        question.getAnswer(),
+                        question.getExplanation(),
+                        question.getGeneratedDate(),
+                        question.getTopics())
         );
     }
 
@@ -159,7 +158,6 @@ public class QuestionService {
 
             questions.add(question);
         }
-
 
 
         return (long) questionRepository.saveAll(questions).size();
@@ -221,7 +219,6 @@ public class QuestionService {
                 }
 
 
-
                 questions.add(question);
             }
         } catch (NoSuchElementException e) {
@@ -232,4 +229,34 @@ public class QuestionService {
         return ResponseEntity.ok((long) questionRepository.saveAll(questions).size());
     }
 
+    public ResponseEntity<?> patchTopics(UpdateQuestionTopicsRequest updateQuestionTopicsRequest) {
+        Question question = questionRepository.findById(updateQuestionTopicsRequest.getQuestionId()).orElseThrow(() -> new EntityNotFoundException("Cannot find the question"));
+
+        for (String title : updateQuestionTopicsRequest.getTopics()) {
+            Topic topic = topicRepository.findByTitle(title).orElseThrow(() -> new EntityNotFoundException("Cannot find the topic"));
+
+            topic.getQuestions().add(question);
+            question.getTopics().add(topic);
+        }
+
+        return ResponseEntity.ok(questionRepository.save(question));
+    }
+
+    public Page<QuestionTopic> getAllQuestionTopics(Pageable pageable) {
+        return questionRepository.findAll(pageable).map((question -> new QuestionTopic(
+                question.getId(),
+                question.getTitle(),
+                question.getQuestion(),
+                question.getTopics().stream().map(Topic::getTitle).collect(Collectors.toSet())
+        )));
+    }
+
+    public Page<QuestionTopic> getTopicsWithTitle(Pageable pageable, String title) {
+        return questionRepository.findByTitle(pageable, title).map((question -> new QuestionTopic(
+                question.getId(),
+                question.getTitle(),
+                question.getQuestion(),
+                question.getTopics().stream().map(Topic::getTitle).collect(Collectors.toSet())
+        )));
+    }
 }

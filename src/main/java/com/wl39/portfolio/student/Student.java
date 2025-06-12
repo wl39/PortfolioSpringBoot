@@ -3,6 +3,7 @@ package com.wl39.portfolio.student;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.wl39.portfolio.assignment.Assignment;
 import com.wl39.portfolio.calendar.Calendar;
+import com.wl39.portfolio.stats.StudentTopicStats;
 import com.wl39.portfolio.submission.Submission;
 import com.wl39.portfolio.subscription.StudentServiceSubscription;
 import com.wl39.portfolio.user.UserEntity;
@@ -35,6 +36,10 @@ public class Student {
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private Set<Calendar> calendars = new HashSet<>();
+
+    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private Set<StudentTopicStats> topicStats = new HashSet<>();
 
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<StudentServiceSubscription> subscriptions = new ArrayList<>();
@@ -107,5 +112,13 @@ public class Student {
 
     public void setUser(UserEntity user) {
         this.user = user;
+    }
+
+    public Set<StudentTopicStats> getTopicStats() {
+        return topicStats;
+    }
+
+    public void setTopicStats(Set<StudentTopicStats> topicStats) {
+        this.topicStats = topicStats;
     }
 }

@@ -1,12 +1,16 @@
 package com.wl39.portfolio.submission;
 
+import com.wl39.portfolio.PostTransactionTaskScheduler;
 import com.wl39.portfolio.assignment.Assignment;
 import com.wl39.portfolio.assignment.AssignmentRepository;
 import com.wl39.portfolio.calendar.CalendarService;
 import com.wl39.portfolio.question.Question;
 import com.wl39.portfolio.question.QuestionRepository;
+import com.wl39.portfolio.stats.StudentTopicStatsService;
 import com.wl39.portfolio.student.Student;
 import com.wl39.portfolio.student.StudentRepository;
+import com.wl39.portfolio.topic.Topic;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,40 +22,45 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class SubmissionService {
     private final SubmissionRepository submissionRepository;
     private final StudentRepository studentRepository;
     private final QuestionRepository questionRepository;
     private final AssignmentRepository assignmentRepository;
     private final CalendarService calendarService;
-
-    @Autowired
-    public SubmissionService(SubmissionRepository submissionRepository, StudentRepository studentRepository, QuestionRepository questionRepository, AssignmentRepository assignmentRepository, CalendarService calendarService) {
-        this.submissionRepository = submissionRepository;
-        this.studentRepository = studentRepository;
-        this.questionRepository = questionRepository;
-        this.assignmentRepository = assignmentRepository;
-        this.calendarService = calendarService;
-    }
+    private final PostTransactionTaskScheduler postTransactionTaskScheduler;
+    private final StudentTopicStatsService studentTopicStatsService;
 
     @Transactional
     public void postSubmission(List<SubmissionCreateRequest> submissionCreateRequest) {
         int MCQCounts = 0;
         int SAQCounts = 0;
 
+        List<SubmissionTopic> submissionTopics = new ArrayList<>();
+
+        Student student = new Student();
+
         for (SubmissionCreateRequest scr : submissionCreateRequest) {
             Submission submission = new Submission();
 
             Assignment assignment = new Assignment();
             Question question = new Question();
-            Student student = new Student();
 
             question = questionRepository.findById(scr.getQuestionId()).orElseThrow();
             student = studentRepository.findByName(scr.getStudentName()).orElseThrow();
+
+            SubmissionTopic submissionTopic = new SubmissionTopic();
+            submissionTopic.setQuestionId(question.getId());
+            submissionTopic.setTopicTitles(question.getTopics().stream()
+                    .map(Topic::getTitle)
+                    .collect(Collectors.toSet()));
 
             if (question.getType() == 's') {
                 SAQCounts++;
@@ -60,8 +69,10 @@ public class SubmissionService {
                 MCQCounts++;
                 if (!scr.getStudentAnswer().equals(question.getAnswer())) {
                     submission.setMarked(-1);
+                    submissionTopic.setMarked(-1);
                 } else {
                     submission.setMarked(1);
+                    submissionTopic.setMarked(1);
                 }
             }
 
@@ -78,8 +89,19 @@ public class SubmissionService {
 
             submissionRepository.save(submission);
 
+            // TODO: If the calendar is missing, make a new calendar and save it!
             calendarService.submitAnswer(student, assignment.getTargetDate().toLocalDate(), question.getType() == 's');
+
+            submissionTopics.add(submissionTopic);
         }
+
+        Student finalStudent = student;
+
+        postTransactionTaskScheduler.runAfterCommit(() -> {
+            // 원하는 작업 실행
+            System.out.println("Student's stat recalculated: Student: " + finalStudent.getName());
+            studentTopicStatsService.reloadStatsForStudent(finalStudent, submissionTopics);
+        }, 1000);
     }
 
     public Page<SubmissionQuestion> getSubmissions(Pageable pageable, String name) {
@@ -124,4 +146,8 @@ public class SubmissionService {
 
         return ResponseEntity.ok(submissionRepository.getLatestSubmissionDayCountsByName(name, date));
     }
+
+//    public List<SubmissionQuestion> getAllSubmissionsByName(String name) {
+//
+//    }
 }

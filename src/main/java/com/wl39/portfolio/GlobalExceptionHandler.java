@@ -25,6 +25,10 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<?> handleValidationExceptions(MethodArgumentNotValidException ex) {
+        System.out.println("MethodArgumentNotValidException occurs!");
+        System.out.println("Status: " + ex.getStatusCode());
+        System.out.println("Reason: " + ex.getMessage());
+
         List<String> errors = ex.getBindingResult()
                 .getFieldErrors()
                 .stream()
@@ -35,6 +39,10 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<?> handleConstraintViolation(ConstraintViolationException ex) {
+        System.out.println("ConstraintViolationException occurs!");
+        System.out.println("Status: " + ex.getCause());
+        System.out.println("Reason: " + ex.getMessage());
+
         List<String> errors = ex.getConstraintViolations().stream()
                 .map(v -> v.getPropertyPath() + ": " + v.getMessage())
                 .toList();

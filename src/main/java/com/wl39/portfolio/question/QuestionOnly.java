@@ -1,10 +1,18 @@
 package com.wl39.portfolio.question;
 
 import com.wl39.portfolio.candidate.Candidate;
+import com.wl39.portfolio.topic.Topic;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
+@Getter
+@Setter
 public class QuestionOnly {
     private Long id;
     private String title;
@@ -15,9 +23,10 @@ public class QuestionOnly {
     private String answer;
     private String explanation;
     private LocalDateTime generatedDate;
+    private Set<String> topicTitles;
 
 
-    public QuestionOnly(Long id, String title, String question, Character type, List<Candidate> candidates, String hint, String answer, String explanation, LocalDateTime generatedDate) {
+    public QuestionOnly(Long id, String title, String question, Character type, List<Candidate> candidates, String hint, String answer, String explanation, LocalDateTime generatedDate, Set<Topic> topics) {
         this.id = id;
         this.title = title;
         this.question = question;
@@ -27,77 +36,8 @@ public class QuestionOnly {
         this.answer = answer;
         this.explanation = explanation;
         this.generatedDate = generatedDate;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getQuestion() {
-        return question;
-    }
-
-    public void setQuestion(String question) {
-        this.question = question;
-    }
-
-    public Character getType() {
-        return type;
-    }
-
-    public void setType(Character type) {
-        this.type = type;
-    }
-
-    public List<Candidate> getCandidates() {
-        return candidates;
-    }
-
-    public void setCandidates(List<Candidate> candidates) {
-        this.candidates = candidates;
-    }
-
-    public String getHint() {
-        return hint;
-    }
-
-    public void setHint(String hint) {
-        this.hint = hint;
-    }
-
-    public String getAnswer() {
-        return answer;
-    }
-
-    public void setAnswer(String answer) {
-        this.answer = answer;
-    }
-
-    public String getExplanation() {
-        return explanation;
-    }
-
-    public void setExplanation(String explanation) {
-        this.explanation = explanation;
-    }
-
-    public LocalDateTime getGeneratedDate() {
-        return generatedDate;
-    }
-
-    public void setGeneratedDate(LocalDateTime generatedDate) {
-        this.generatedDate = generatedDate;
+        this.topicTitles = topics.stream()
+                .map(Topic::getTitle)
+                .collect(Collectors.toSet());
     }
 }
