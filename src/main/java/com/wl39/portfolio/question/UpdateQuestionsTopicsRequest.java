@@ -11,7 +11,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UpdateQuestionTopicsRequest {
-    private Long questionId;
+public class UpdateQuestionsTopicsRequest {
+    private List<Long> questionIds;
     private List<String> topics;
 }

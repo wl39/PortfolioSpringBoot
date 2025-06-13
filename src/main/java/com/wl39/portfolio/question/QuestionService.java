@@ -4,13 +4,11 @@ import com.wl39.portfolio.assignment.Assignment;
 import com.wl39.portfolio.calendar.CalendarService;
 import com.wl39.portfolio.candidate.Candidate;
 import com.wl39.portfolio.student.Student;
-import com.wl39.portfolio.student.StudentRepository;
 import com.wl39.portfolio.student.StudentService;
 import com.wl39.portfolio.topic.Topic;
 import com.wl39.portfolio.topic.TopicRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -18,7 +16,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -229,17 +226,24 @@ public class QuestionService {
         return ResponseEntity.ok((long) questionRepository.saveAll(questions).size());
     }
 
-    public ResponseEntity<?> patchTopics(UpdateQuestionTopicsRequest updateQuestionTopicsRequest) {
-        Question question = questionRepository.findById(updateQuestionTopicsRequest.getQuestionId()).orElseThrow(() -> new EntityNotFoundException("Cannot find the question"));
+    public ResponseEntity<?> patchTopics(UpdateQuestionsTopicsRequest updateQuestionsTopicsRequest) {
+        List<Question> questions = new ArrayList<>();
 
-        for (String title : updateQuestionTopicsRequest.getTopics()) {
-            Topic topic = topicRepository.findByTitle(title).orElseThrow(() -> new EntityNotFoundException("Cannot find the topic"));
+        for (Long questionId : updateQuestionsTopicsRequest.getQuestionIds()) {
+            Question question = questionRepository.findById(questionId).orElseThrow(() -> new EntityNotFoundException("Cannot find the question"));
 
-            topic.getQuestions().add(question);
-            question.getTopics().add(topic);
+            for (String title : updateQuestionsTopicsRequest.getTopics()) {
+                Topic topic = topicRepository.findByTitle(title).orElseThrow(() -> new EntityNotFoundException("Cannot find the topic"));
+
+                topic.getQuestions().add(question);
+                question.getTopics().add(topic);
+            }
+
+            questions.add(question);
         }
 
-        return ResponseEntity.ok(questionRepository.save(question));
+
+        return ResponseEntity.ok(questionRepository.saveAll(questions));
     }
 
     public Page<QuestionTopic> getAllQuestionTopics(Pageable pageable) {
