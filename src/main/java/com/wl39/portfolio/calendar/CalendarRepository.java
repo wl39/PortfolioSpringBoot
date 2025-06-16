@@ -10,4 +10,5 @@ public interface CalendarRepository extends JpaRepository<Calendar, Long> {
     Optional<Calendar> findByStudent_NameAndYearAndMonthAndDay(String name, Integer year, Integer month, Integer day);
     List<Calendar> findByYearAndMonthAndStudent_Name(Integer year, Integer month, String name);
     void deleteByYearAndMonthAndDayAndStudent_Name(Integer year, Integer month, Integer day, String name);
+    void deleteByStudent_Name(String name);
 }

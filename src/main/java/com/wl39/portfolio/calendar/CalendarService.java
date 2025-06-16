@@ -116,8 +116,9 @@ public class CalendarService {
 
         List<Calendar> calendars = new ArrayList<>();
 
+        calendarRepository.deleteByStudent_Name(name);
+
         for (LocalDate date : allDates) {
-            calendarRepository.deleteByYearAndMonthAndDayAndStudent_Name(date.getYear(), date.getMonthValue(), date.getDayOfMonth(), name);
             Calendar calendar = new Calendar();
             calendar.setYear(date.getYear());
             calendar.setMonth(date.getMonthValue());

@@ -15,6 +15,7 @@ public class JWTProvider {
     @Value("${JWT_SECRET}")
     private String secretKey;
     private final long expirationMs = 3600000; // 1 hours
+    private final long refreshExpirationMs = 7 * 24 * 60 * 60 * 1000L; // 7 days
 
     private Algorithm getAlgorithm() {
         return Algorithm.HMAC512(secretKey);
@@ -29,6 +30,15 @@ public class JWTProvider {
                 .withExpiresAt(new Date(System.currentTimeMillis() + expirationMs))
                 .sign(getAlgorithm());
     }
+
+
+    public String generateRefreshToken(String email) {
+        return JWT.create()
+                .withSubject(email)
+                .withExpiresAt(new Date(System.currentTimeMillis() + refreshExpirationMs))
+                .sign(getAlgorithm());
+    }
+
 
     public boolean validateToken(String token) {
         try {
