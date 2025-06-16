@@ -39,9 +39,9 @@ public class SubmissionController {
         return submissionService.getWrongSubmissions(pageable, name);
     }
 
-    @PutMapping("/mark")
-    public void markSubmission(@RequestBody Map<Long, Integer> marks) {
-        this.submissionService.putSubmission(marks);
+    @PutMapping("/mark/{name}")
+    public void markSubmission(@RequestBody Map<Long, Integer> marks, @PathVariable String name) {
+        this.submissionService.putSubmission(marks, name);
     }
 
     @GetMapping("/day_counts")

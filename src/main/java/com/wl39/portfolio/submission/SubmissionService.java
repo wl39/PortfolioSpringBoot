@@ -3,6 +3,7 @@ package com.wl39.portfolio.submission;
 import com.wl39.portfolio.PostTransactionTaskScheduler;
 import com.wl39.portfolio.assignment.Assignment;
 import com.wl39.portfolio.assignment.AssignmentRepository;
+import com.wl39.portfolio.calendar.Calendar;
 import com.wl39.portfolio.calendar.CalendarService;
 import com.wl39.portfolio.question.Question;
 import com.wl39.portfolio.question.QuestionRepository;
@@ -109,7 +110,7 @@ public class SubmissionService {
 
     public Page<SubmissionQuestion> getSubmissions(Pageable pageable, String name) {
         return submissionRepository.findByStudentName(pageable, name).map(submission ->
-             new SubmissionQuestion(submission.getId(), submission.getQuestion(), submission.getStudentAnswer(), submission.getSubmitDate(), submission.getMarked())
+                new SubmissionQuestion(submission.getId(), submission.getQuestion(), submission.getStudentAnswer(), submission.getSubmitDate(), submission.getMarked())
         );
     }
 
@@ -121,18 +122,21 @@ public class SubmissionService {
 
     public Page<SubmissionQuestion> getWrongSubmissions(Pageable pageable, String name) {
         return this.submissionRepository.findByStudentNameAndMarked(pageable, name, -1).map(submission ->
-             new SubmissionQuestion(submission.getId(), submission.getQuestion(), submission.getStudentAnswer(), submission.getSubmitDate(), submission.getMarked())
+                new SubmissionQuestion(submission.getId(), submission.getQuestion(), submission.getStudentAnswer(), submission.getSubmitDate(), submission.getMarked())
         );
     }
 
-    public void putSubmission(Map<Long, Integer> marks) {
+    public void putSubmission(Map<Long, Integer> marks, String name) {
         for (Map.Entry<Long, Integer> entry : marks.entrySet()) {
             Long id = entry.getKey();
             Integer mark = entry.getValue();
 
-            Submission submission = this.submissionRepository.findById(id).orElseThrow();
+            Submission submission = this.submissionRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "submission not found"));
 
             submission.setMarked(mark);
+
+            Student student = this.studentRepository.findByName(name).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "student not found"));
+            this.calendarService.markSAQQuestion(submission.getTargetDate().getYear(), submission.getTargetDate().getMonthValue(), submission.getTargetDate().getDayOfMonth(), name);
 
             this.submissionRepository.save(submission);
         }
@@ -144,13 +148,13 @@ public class SubmissionService {
 
     public ResponseEntity<?> getLatestSubmissionDayCountsByName(String name) {
         LocalDate date = submissionRepository.findLatestSubmitDateByName(name).orElseThrow(() ->
-            new ResponseStatusException(HttpStatus.NOT_FOUND, "Either date or student not found")
+                new ResponseStatusException(HttpStatus.NOT_FOUND, "Either date or student not found")
         );
 
         return ResponseEntity.ok(submissionRepository.getLatestSubmissionDayCountsByName(name, date));
     }
 
-//    public List<SubmissionQuestion> getAllSubmissionsByName(String name) {
-//
-//    }
+    public List<Submission> getAllSubmissionsByName(String name) {
+        return submissionRepository.findByStudentName(name);
+    }
 }

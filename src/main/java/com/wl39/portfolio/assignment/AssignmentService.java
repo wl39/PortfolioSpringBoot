@@ -73,4 +73,8 @@ public class AssignmentService {
 
         return assignmentRepository.save(assignment);
     }
+
+    public List<Assignment> getAllAssignmentsByName(String name) {
+        return assignmentRepository.findByStudentName(name);
+    }
 }

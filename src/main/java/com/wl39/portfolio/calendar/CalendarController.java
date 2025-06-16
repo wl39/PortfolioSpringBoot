@@ -43,4 +43,17 @@ public class CalendarController {
 
         return ResponseEntity.ok(this.calendarService.findByYearMonthAndStudent(year, month, name));
     }
+
+    @PatchMapping("/{name}")
+    public ResponseEntity<?> reloadCalendars(@PathVariable String name, Authentication authentication) {
+        CustomUserPrincipal user = (CustomUserPrincipal) authentication.getPrincipal();
+        boolean isAdmin = authentication.getAuthorities().stream()
+                .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"));
+
+        if (!isAdmin) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access Denied");
+        }
+
+        return ResponseEntity.ok(this.calendarService.reloadCalendars(name));
+    }
 }
