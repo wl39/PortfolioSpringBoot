@@ -11,7 +11,6 @@ import com.wl39.portfolio.student.Student;
 import com.wl39.portfolio.student.StudentRepository;
 import com.wl39.portfolio.topic.Topic;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -83,7 +82,11 @@ public class SubmissionService {
             assignment = assignmentRepository.findByQuestion_IdAndStudent_Name(scr.getQuestionId(), scr.getStudentName()).orElseThrow();
 
             submission.setTargetDate(assignment.getTargetDate());
-            submission.setSubmitDate(LocalDateTime.now());
+
+            LocalDateTime submitDate = LocalDateTime.now();
+
+            submission.setSubmitDate(submitDate);
+            submissionTopic.setSubmitDate(submitDate);
 
             assignmentRepository.deleteById(assignment.getId());
 
@@ -100,7 +103,7 @@ public class SubmissionService {
         postTransactionTaskScheduler.runAfterCommit(() -> {
             // 원하는 작업 실행
             System.out.println("Student's stat recalculated: Student: " + finalStudent.getName());
-            studentTopicStatsService.reloadStatsForStudent(finalStudent, submissionTopics);
+            studentTopicStatsService.updateStatsForStudent(finalStudent, submissionTopics);
         }, 1000);
     }
 

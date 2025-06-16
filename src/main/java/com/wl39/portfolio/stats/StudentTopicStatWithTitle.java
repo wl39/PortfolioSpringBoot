@@ -13,4 +13,5 @@ public class StudentTopicStatWithTitle {
     private String topic;
     private Long correctCount;
     private Long wrongCount;
+    private Long totalCount;
 }

@@ -1,6 +1,10 @@
 package com.wl39.portfolio.calendar;
 
+import com.wl39.portfolio.user.CustomUserPrincipal;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -25,5 +29,18 @@ public class CalendarController {
         }
 
         return list;
+    }
+
+    @GetMapping("/{name}/{year}/{month}")
+    public ResponseEntity<?> getCalendars(@PathVariable int year, @PathVariable int month, @PathVariable String name, Authentication authentication) {
+        CustomUserPrincipal user = (CustomUserPrincipal) authentication.getPrincipal();
+        boolean isAdmin = authentication.getAuthorities().stream()
+                .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"));
+
+        if (!isAdmin && !user.getUsername().equals(name)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access Denied");
+        }
+
+        return ResponseEntity.ok(this.calendarService.findByYearMonthAndStudent(year, month, name));
     }
 }

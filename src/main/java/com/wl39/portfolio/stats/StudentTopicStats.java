@@ -31,5 +31,6 @@ public class StudentTopicStats {
 
     private Long correctCount;
     private Long wrongCount;
-    private LocalDateTime updatedAt;
+    private Long totalCount;
+    private LocalDateTime submitDate;
 }
