@@ -4,6 +4,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -16,6 +17,9 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping(path = "api/v1/users")
 public class UserController {
+
+    @Value("${IS_PROD}")
+    private boolean isProd;
     private final AuthenticationManager authenticationManager;
     private final JWTProvider jwtProvider;
     private final UserService userService;
@@ -44,14 +48,14 @@ public class UserController {
             // access token
             Cookie accessCookie = new Cookie("token", accessToken);
             accessCookie.setHttpOnly(true);
-            accessCookie.setSecure(true);
+            accessCookie.setSecure(!isProd);
             accessCookie.setPath("/");
             accessCookie.setMaxAge(60 * 60); // 1 hour
 
             // refresh token
             Cookie refreshCookie = new Cookie("refreshToken", refreshToken);
             refreshCookie.setHttpOnly(true);
-            refreshCookie.setSecure(true);
+            refreshCookie.setSecure(!isProd);
             refreshCookie.setPath("/");
             refreshCookie.setMaxAge(7 * 24 * 60 * 60); // 7 days
 
@@ -95,7 +99,7 @@ public class UserController {
 
         Cookie accessCookie = new Cookie("token", newAccessToken);
         accessCookie.setHttpOnly(true);
-        accessCookie.setSecure(true);
+        accessCookie.setSecure(!isProd);
         accessCookie.setPath("/");
         accessCookie.setMaxAge(60 * 60); // 1시간
 
