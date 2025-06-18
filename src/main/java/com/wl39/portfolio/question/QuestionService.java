@@ -92,9 +92,18 @@ public class QuestionService {
         return questionRepository.findByAssignments_Student_Name(pageable, name);
     }
 
-    public Page<Question> getOptimizedQuestionsPage(Pageable pageable, String name) {
+    public Page<QuestionStudent> getOptimizedQuestionsPage(Pageable pageable, String name) {
 
-        return questionRepository.findByStudentNameFetchAssignments(pageable, name);
+        return questionRepository.findByStudentNameFetchAssignments(pageable, name).map((question -> new QuestionStudent(
+                question.getId(),
+                question.getTitle(),
+                question.getQuestion(),
+                question.getType(),
+                question.getCandidates(),
+                question.getHint(),
+                question.getGeneratedDate(),
+                question.getTopics()
+        )));
     }
 
     public Page<QuestionOnly> getAllQuestionsPage(Pageable pageable) {
@@ -193,7 +202,6 @@ public class QuestionService {
         try {
             for (QuestionUpdateRequest request : questionUpdateRequests) {
                 Question question = questionRepository.findById(request.getId()).orElseThrow(NoSuchElementException::new);
-                List<Candidate> candidates = new ArrayList<>();
 
                 if (request.getTitle() != null && !request.getTitle().isBlank()) {
                     question.setTitle(request.getTitle());
@@ -240,6 +248,24 @@ public class QuestionService {
                         existingCandidates.remove(existingCandidates.size() - 1);
                     }
                 }
+
+                if (request.getTopics() != null) {
+                    Set<Topic> topics = new HashSet<>();
+
+                    for (String title : request.getTopics()) {
+                        Topic topic = topicRepository.findByTitle(title).orElseGet(() -> {
+                            Topic newTopic = new Topic();
+                            newTopic.setTitle(title);
+                            return topicRepository.save(newTopic); // Make ID first
+                        });
+
+                        topic.getQuestions().add(question);      // Add Question to Topic
+                        topics.add(topic);                       // Add Topic to Question
+                    }
+
+                    question.setTopics(topics);
+                }
+
 
 
                 questions.add(question);

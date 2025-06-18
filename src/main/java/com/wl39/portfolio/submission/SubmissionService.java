@@ -58,7 +58,7 @@ public class SubmissionService {
 
             SubmissionTopic submissionTopic = new SubmissionTopic();
             submissionTopic.setQuestionId(question.getId());
-            submissionTopic.setTopicTitles(question.getTopics().stream()
+            submissionTopic.setTopics(question.getTopics().stream()
                     .map(Topic::getTitle)
                     .collect(Collectors.toSet()));
 

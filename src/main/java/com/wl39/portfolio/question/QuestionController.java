@@ -54,7 +54,7 @@ public class QuestionController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access Denied");
         }
 
-        Page<Question> page = questionService.getOptimizedQuestionsPage(pageable, name);
+        Page<QuestionStudent> page = questionService.getOptimizedQuestionsPage(pageable, name);
 
 
         return page.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(page);

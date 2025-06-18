@@ -37,4 +37,5 @@ public class QuestionUpdateRequest {
     private List<String> candidates;
 
     private List<String> students;
+    private List<String> topics;
 }

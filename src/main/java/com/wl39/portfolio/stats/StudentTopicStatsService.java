@@ -50,7 +50,7 @@ public class StudentTopicStatsService {
         for (SubmissionTopic submissionTopic : submissionTopics) {
             boolean isCorrect = submissionTopic.getMarked() == 1;
 
-            for (String title : submissionTopic.getTopicTitles()) {
+            for (String title : submissionTopic.getTopics()) {
                 Topic topic = topicRepository.findByTitle(title).orElseThrow();
 
                 // Student ID와 Topic ID로 통계 조회

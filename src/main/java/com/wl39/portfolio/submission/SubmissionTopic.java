@@ -20,5 +20,5 @@ public class SubmissionTopic {
     private Long questionId;
     private Integer marked;
     private LocalDateTime submitDate;
-    private Set<String> topicTitles;
+    private Set<String> topics;
 }
