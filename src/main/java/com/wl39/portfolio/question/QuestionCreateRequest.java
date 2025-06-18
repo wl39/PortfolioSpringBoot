@@ -1,6 +1,7 @@
 package com.wl39.portfolio.question;
 
 import com.wl39.portfolio.candidate.Candidate;
+import com.wl39.portfolio.topic.Topic;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
@@ -38,10 +39,13 @@ public class QuestionCreateRequest {
     @NotNull(message = "Students list must not be null")
     private List<String> students;
 
+    @NotNull(message = "Topic list must not be null")
+    private List<String> topics;
+
 
     public QuestionCreateRequest() {}
 
-    public QuestionCreateRequest(String title, String question, Character type, String hint, String answer, String explanation, LocalDateTime generatedDate, LocalDateTime targetDate, List<String> candidates, List<String> students) {
+    public QuestionCreateRequest(String title, String question, Character type, String hint, String answer, String explanation, LocalDateTime generatedDate, LocalDateTime targetDate, List<String> candidates, List<String> students, List<String> topics) {
         this.title = title;
         this.question = question;
         this.type = type;
@@ -52,6 +56,7 @@ public class QuestionCreateRequest {
         this.targetDate = targetDate;
         this.candidates = candidates;
         this.students = students;
+        this.topics = topics;
     }
 
     public String getTitle() {
@@ -132,6 +137,14 @@ public class QuestionCreateRequest {
 
     public void setStudents(List<String> students) {
         this.students = students;
+    }
+
+    public List<String> getTopics() {
+        return topics;
+    }
+
+    public void setTopics(List<String> topics) {
+        this.topics = topics;
     }
 
     @Override

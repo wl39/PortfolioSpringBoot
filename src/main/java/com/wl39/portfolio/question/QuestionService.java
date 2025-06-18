@@ -42,6 +42,7 @@ public class QuestionService {
 
         List<Assignment> assignments = new ArrayList<>();
         List<Candidate> candidates = new ArrayList<>();
+        Set<Topic> topics = new HashSet<>();
 
         for (String value : questionCreateRequest.getCandidates()) {
             Candidate candidate = new Candidate();
@@ -68,9 +69,20 @@ public class QuestionService {
             calendarService.assignNewQuestion(student, questionCreateRequest.getTargetDate().toLocalDate());
         }
 
-
         question.setAssignments(assignments);
 
+        for (String title : questionCreateRequest.getTopics()) {
+            Topic topic = topicRepository.findByTitle(title).orElseGet(() -> {
+                Topic newTopic = new Topic();
+                newTopic.setTitle(title);
+                return topicRepository.save(newTopic); // Make ID first
+            });
+
+            topic.getQuestions().add(question);      // Add Question to Topic
+            topics.add(topic);                       // Add Topic to Question
+        }
+
+        question.setTopics(topics); // Bidirectional!
 
         return questionRepository.save(question).getId();
     }
@@ -124,6 +136,7 @@ public class QuestionService {
 
             List<Assignment> assignments = new ArrayList<>();
             List<Candidate> candidates = new ArrayList<>();
+            Set<Topic> topics = new HashSet<>();
 
             for (String value : questionCreateRequest.getCandidates()) {
                 Candidate candidate = new Candidate();
@@ -150,8 +163,21 @@ public class QuestionService {
                 calendarService.assignNewQuestion(student, questionCreateRequest.getTargetDate().toLocalDate());
             }
 
-
             question.setAssignments(assignments);
+
+            for (String title : questionCreateRequest.getTopics()) {
+                Topic topic = topicRepository.findByTitle(title).orElseGet(() -> {
+                    Topic newTopic = new Topic();
+                    newTopic.setTitle(title);
+                    return topicRepository.save(newTopic); // Make ID first
+                });
+
+                topic.getQuestions().add(question);      // Add Question to Topic
+                topics.add(topic);                       // Add Topic to Question
+            }
+
+            question.setTopics(topics); // Bidirectional!
+
 
             questions.add(question);
         }
