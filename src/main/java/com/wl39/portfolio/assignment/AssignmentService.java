@@ -77,4 +77,10 @@ public class AssignmentService {
     public List<Assignment> getAllAssignmentsByName(String name) {
         return assignmentRepository.findByStudentName(name);
     }
+
+    public LocalDate getLatestDate(String name) {
+        return assignmentRepository.findTopByStudent_NameOrderByTargetDateDesc(name)
+                .map(a -> a.getTargetDate().toLocalDate())
+                .orElse(null);
+    }
 }

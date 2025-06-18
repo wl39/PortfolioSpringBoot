@@ -21,4 +21,6 @@ public interface AssignmentRepository extends JpaRepository<Assignment, Long> {
             """) // WHERE MARKED -1 OR 1 OR 0
     Long getCounts(@Param("name") String name, @Param("year") int year, @Param("month") int month);
     List<Assignment> findByStudentName(String name);
+
+    Optional<Assignment> findTopByStudent_NameOrderByTargetDateDesc(String name);
 }
