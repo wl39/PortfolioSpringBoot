@@ -5,12 +5,14 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -45,7 +47,8 @@ public class QuestionController {
     }
 
     @GetMapping("student/{name}")
-    public ResponseEntity<?> getOptimizedQuestionsPage(Pageable pageable, @PathVariable String name, Authentication authentication) {
+    public ResponseEntity<?> getOptimizedQuestionsPage(Pageable pageable, @PathVariable String name, @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
+                                                       Authentication authentication) {
         CustomUserPrincipal user = (CustomUserPrincipal) authentication.getPrincipal();
         boolean isAdmin = authentication.getAuthorities().stream()
                 .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"));
@@ -54,7 +57,7 @@ public class QuestionController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access Denied");
         }
 
-        Page<QuestionStudent> page = questionService.getOptimizedQuestionsPage(pageable, name);
+        Page<QuestionStudent> page = questionService.getOptimizedQuestionsPage(pageable, name, date);
 
 
         return page.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(page);
@@ -67,7 +70,7 @@ public class QuestionController {
 
     @GetMapping("topics")
     public ResponseEntity<?> getTopics(Pageable pageable) {
-        return  ResponseEntity.ok(questionService.getAllQuestionTopics(pageable));
+        return ResponseEntity.ok(questionService.getAllQuestionTopics(pageable));
     }
 
     @PatchMapping("topics")

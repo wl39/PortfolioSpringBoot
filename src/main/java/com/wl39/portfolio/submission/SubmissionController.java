@@ -5,11 +5,13 @@ import com.wl39.portfolio.user.CustomUserPrincipal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -57,6 +59,7 @@ public class SubmissionController {
 
         return this.submissionService.getAllSubmissionDayCountsByName(name);
     }
+
     @GetMapping("/day_counts/latest")
     public ResponseEntity<?> getLatestSubmissionDayCountsAutoByName(@RequestParam String name, Authentication authentication) {
         CustomUserPrincipal user = (CustomUserPrincipal) authentication.getPrincipal();
@@ -72,7 +75,7 @@ public class SubmissionController {
     }
 
     @GetMapping("/{name}")
-    public Page<SubmissionQuestion> getSubmissions(Pageable pageable, @PathVariable String name) {
-        return submissionService.getSubmissions(pageable, name);
+    public Page<SubmissionQuestion> getSubmissions(Pageable pageable, @PathVariable String name, @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+        return submissionService.getSubmissions(pageable, name, date);
     }
 }

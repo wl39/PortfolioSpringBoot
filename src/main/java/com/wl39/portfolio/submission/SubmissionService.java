@@ -3,7 +3,6 @@ package com.wl39.portfolio.submission;
 import com.wl39.portfolio.PostTransactionTaskScheduler;
 import com.wl39.portfolio.assignment.Assignment;
 import com.wl39.portfolio.assignment.AssignmentRepository;
-import com.wl39.portfolio.calendar.Calendar;
 import com.wl39.portfolio.calendar.CalendarService;
 import com.wl39.portfolio.question.Question;
 import com.wl39.portfolio.question.QuestionRepository;
@@ -108,7 +107,13 @@ public class SubmissionService {
         }, 1000);
     }
 
-    public Page<SubmissionQuestion> getSubmissions(Pageable pageable, String name) {
+    public Page<SubmissionQuestion> getSubmissions(Pageable pageable, String name, LocalDate date) {
+        if (date != null) {
+            return submissionRepository.findByStudentNameAndDate(pageable, name, date.getYear(), date.getMonthValue(), date.getDayOfMonth()).map(submission ->
+                    new SubmissionQuestion(submission.getId(), submission.getQuestion(), submission.getStudentAnswer(), submission.getSubmitDate(), submission.getMarked())
+            );
+        }
+
         return submissionRepository.findByStudentName(pageable, name).map(submission ->
                 new SubmissionQuestion(submission.getId(), submission.getQuestion(), submission.getStudentAnswer(), submission.getSubmitDate(), submission.getMarked())
         );

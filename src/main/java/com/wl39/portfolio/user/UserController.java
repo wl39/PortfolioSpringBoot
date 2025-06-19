@@ -31,6 +31,7 @@ public class UserController {
         this.userService = userService;
     }
 
+
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest, HttpServletResponse response) {
         try {
@@ -154,6 +155,11 @@ public class UserController {
                 "username: " + user.getUsername() + ", role: " + (isAdmin ? "ADMIN" : "USER"));
     }
 
+
+    @PatchMapping
+    public ResponseEntity<?> modify(@RequestBody UserPatch userPatch) {
+        return ResponseEntity.ok(userService.modifyUser(userPatch));
+    }
     @GetMapping
     public ResponseEntity<?> getAllUsers() {
         return ResponseEntity.ok(userService.getAllUsers());

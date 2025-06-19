@@ -18,6 +18,20 @@ import java.util.Optional;
 
 public interface SubmissionRepository extends JpaRepository<Submission, Long> {
     Page<Submission> findByStudentName(Pageable pageable, String name);
+
+    @Query("""
+            SELECT s
+            FROM Submission s
+            JOIN s.student stu
+            WHERE FUNCTION('YEAR', s.targetDate) = :year
+            AND FUNCTION('MONTH', s.targetDate) = :month
+            AND FUNCTION('DAY', s.targetDate) = :day
+            AND stu.name = :name
+            """)
+    Page<Submission> findByStudentNameAndDate(Pageable pageable, @Param("name") String name,
+                                              @Param("year") int year,
+                                              @Param("month") int month,
+                                              @Param("day") int day);
     Page<Submission> findByStudentNameAndMarked(Pageable pageable, String name, Integer marked);
 
     @Query("""

@@ -2,6 +2,7 @@ package com.wl39.portfolio.user;
 
 import com.wl39.portfolio.student.Student;
 import com.wl39.portfolio.student.StudentRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,10 +12,12 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -31,17 +34,11 @@ public class UserService implements UserDetailsService {
     }
 
 
-
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        UserEntity user = userRepository.findByEmail(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + username));
+        UserEntity user = userRepository.findByEmail(username).orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + username));
 
-        return User.builder()
-                .username(user.getEmail())
-                .password(user.getPassword())
-                .roles(user.getRole())
-                .build();
+        return User.builder().username(user.getEmail()).password(user.getPassword()).roles(user.getRole()).build();
     }
 
     public UserEntity findByEmail(String username) {
@@ -83,7 +80,29 @@ public class UserService implements UserDetailsService {
         return username;
     }
 
-    public List<UserEntity> getAllUsers() {
-        return userRepository.findAll();
+    public List<UserResponse> getAllUsers() {
+        return userRepository.findAll().stream().map((user -> new UserResponse(user.getId(), user.getEmail(), user.getUsername(), user.getRole(), user.getStudent()))).collect(Collectors.toList());
     }
+
+    @Transactional
+    public UserResponse modifyUser(UserPatch userPatch) {
+        // 1. 기존 이메일로 사용자 조회
+        UserEntity userEntity = userRepository.findById(userPatch.getId())
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+
+        // 2. 변경 정보 반영
+        userEntity.setEmail(userPatch.getEmail());
+        userEntity.setUsername(userPatch.getUsername());
+        userEntity.setRole(userPatch.getRole());
+
+        // 3. Student 연결 (이름 기반 말고 연관된 user 기준으로)
+        Student student = studentRepository.findById(userEntity.getStudent().getId())
+                .orElseThrow(() -> new EntityNotFoundException("Student not found"));
+
+        student.setName(userPatch.getUsername());
+
+        studentRepository.save(student);
+        return new UserResponse(userRepository.save(userEntity));
+    }
+
 }

@@ -1,11 +1,14 @@
 package com.wl39.portfolio.assignment;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,4 +26,21 @@ public interface AssignmentRepository extends JpaRepository<Assignment, Long> {
     List<Assignment> findByStudentName(String name);
 
     Optional<Assignment> findTopByStudent_NameOrderByTargetDateDesc(String name);
+
+    @Query("""
+    SELECT a
+    FROM Assignment a
+    JOIN a.student s
+    WHERE FUNCTION('YEAR', a.targetDate) = :year
+      AND FUNCTION('MONTH', a.targetDate) = :month
+      AND FUNCTION('DAY', a.targetDate) = :day
+      AND s.name = :name
+    """)
+    Page<Assignment> findByStudentNameAndTargetDate(
+            @Param("name") String name,
+            @Param("year") int year,
+            @Param("month") int month,
+            @Param("day") int day,
+            Pageable pageable
+    );
 }

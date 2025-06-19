@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -92,8 +93,19 @@ public class QuestionService {
         return questionRepository.findByAssignments_Student_Name(pageable, name);
     }
 
-    public Page<QuestionStudent> getOptimizedQuestionsPage(Pageable pageable, String name) {
-
+    public Page<QuestionStudent> getOptimizedQuestionsPage(Pageable pageable, String name, LocalDate date) {
+        if (date != null) {
+            return questionRepository.findByStudentNameFetchAssignments(pageable, name, date.getYear(), date.getMonthValue(), date.getDayOfMonth()).map((question -> new QuestionStudent(
+                    question.getId(),
+                    question.getTitle(),
+                    question.getQuestion(),
+                    question.getType(),
+                    question.getCandidates(),
+                    question.getHint(),
+                    question.getGeneratedDate(),
+                    question.getTopics()
+            )));
+        }
         return questionRepository.findByStudentNameFetchAssignments(pageable, name).map((question -> new QuestionStudent(
                 question.getId(),
                 question.getTitle(),
