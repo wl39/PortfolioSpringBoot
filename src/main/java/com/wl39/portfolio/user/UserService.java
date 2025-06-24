@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -106,4 +107,29 @@ public class UserService implements UserDetailsService {
         return new UserResponse(userRepository.save(userEntity));
     }
 
+
+    public Set<Student> getChildren(String name) {
+        return userRepository.findByUsername(name).orElseThrow().getChildren();
+    }
+
+    public ParentResponse postChildren(String name, List<String> children) {
+        UserEntity user = userRepository.findByUsername(name).orElseThrow();
+
+        Set<Student> newChildren = children.stream().map(s -> {
+            return studentRepository.findByName(s).orElseThrow();
+        }).collect(Collectors.toSet());
+
+        user.getChildren().addAll(newChildren);
+
+        userRepository.save(user);
+
+        return new ParentResponse(user.getEmail(), user.getUsername(), user.getChildren());
+    }
+
+    public List<ParentResponse> getAllParents() {
+        List<UserEntity> users = userRepository.findByRole("PARENT");
+
+
+        return users.stream().map(u -> new ParentResponse(u.getEmail(), u.getUsername(), u.getChildren())).collect(Collectors.toList());
+    }
 }

@@ -14,6 +14,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping(path = "api/v1/users")
 public class UserController {
@@ -130,32 +132,6 @@ public class UserController {
         return ResponseEntity.ok(user.getUsername());
     }
 
-//
-//    @PostMapping("/login")
-//    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest, HttpServletResponse response) {
-//        try {
-//            Authentication authentication = authenticationManager.authenticate(
-//                    new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()) // 인증 전 상태
-//            );
-//
-//            UserEntity user = userService.findByEmail(authentication.getName());
-//
-//            String jwt = jwtProvider.generateToken(user.getEmail(), user.getUsername(), user.getRole());
-//
-//            Cookie cookie = new Cookie("token", jwt);
-//            cookie.setHttpOnly(true); // 자바스크립트에서 접근 불가
-//            cookie.setSecure(true); // HTTPS 연결에서만 전송 (개발 중엔 false로 테스트 가능)
-//            cookie.setPath("/"); // 모든 경로에서 쿠키 사용 가능
-//            cookie.setMaxAge(3600); // 1시간 (초 단위)
-//
-//            response.addCookie(cookie);
-//
-//            return ResponseEntity.ok(user.getUsername());
-//        } catch (BadCredentialsException e) {
-//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
-//        }
-//    }
-
     @PostMapping("/signup")
     public ResponseEntity<String> signup(@RequestBody SignupRequest signupRequest) {
 
@@ -176,6 +152,36 @@ public class UserController {
                 "username: " + user.getUsername() + ", role: " + (isAdmin ? "ADMIN" : "USER"));
     }
 
+    @GetMapping(path = "children/{name}")
+    public ResponseEntity<?> getChildren(@PathVariable String name, Authentication authentication) {
+        CustomUserPrincipal user = (CustomUserPrincipal) authentication.getPrincipal();
+        boolean isAllowed = authentication.getAuthorities().stream()
+                .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN") || auth.getAuthority().equals("ROLE_PARENT"));
+
+        if (isAllowed) {
+            return ResponseEntity.ok(userService.getChildren(name));
+        }
+
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access Denied");
+    }
+
+    @PostMapping(path = "children/{name}")
+    public ResponseEntity<?> postChildren(@PathVariable String name, @RequestBody List<String> children, Authentication authentication) {
+        CustomUserPrincipal user = (CustomUserPrincipal) authentication.getPrincipal();
+        boolean isAllowed = authentication.getAuthorities().stream()
+                .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN") || auth.getAuthority().equals("ROLE_PARENT"));
+
+        if (isAllowed) {
+            return ResponseEntity.ok(userService.postChildren(name, children));
+        }
+
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access Denied");
+    }
+
+    @GetMapping(path = "parents")
+    public ResponseEntity<?> getAllParents() {
+        return ResponseEntity.ok(userService.getAllParents());
+    }
 
     @PatchMapping
     public ResponseEntity<?> modify(@RequestBody UserPatch userPatch) {
