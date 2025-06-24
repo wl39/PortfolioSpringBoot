@@ -82,4 +82,17 @@ public class QuestionController {
     public ResponseEntity<?> getTopicsWithTitle(Pageable pageable, @RequestParam String title) {
         return ResponseEntity.ok(questionService.getTopicsWithTitle(pageable, title));
     }
+
+    @GetMapping("search")
+    public ResponseEntity<?> searchUnsolvedQuestions(
+            @RequestParam String studentName,
+            QuestionSearchParam param,
+            Pageable pageable
+    ) {
+        LocalDate date = param.getTargetDate();
+        return ResponseEntity.ok(questionService.searchQuestions(
+                        studentName, param, pageable
+                )
+        );
+    }
 }

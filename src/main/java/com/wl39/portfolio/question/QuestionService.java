@@ -327,4 +327,38 @@ public class QuestionService {
                 question.getTopics().stream().map(Topic::getTitle).collect(Collectors.toSet())
         )));
     }
-}
+
+    public Page<Question> searchQuestions(String studentName, QuestionSearchParam param, Pageable pageable) {
+        LocalDate date = param.getTargetDate();
+
+        boolean isNullDate = (date == null);
+        Integer year = isNullDate ? null : date.getYear();
+        Integer month = isNullDate ? null : date.getMonthValue();
+        Integer day = isNullDate ? null : date.getDayOfMonth();
+
+        System.out.println(param.getSolved());
+
+        if (param.getSolved())
+            return questionRepository.searchSolvedQuestions(
+                    pageable,
+                    studentName,
+                    isNullDate,
+                    year,
+                    month,
+                    day,
+                    param.getId(),
+                    param.getTitle(),
+                    param.getTopics()
+            );
+        else return questionRepository.searchUnsolvedQuestions(
+                pageable,
+                studentName,
+                isNullDate,
+                year,
+                month,
+                day,
+                param.getId(),
+                param.getTitle(),
+                param.getTopics()
+        );
+    }}

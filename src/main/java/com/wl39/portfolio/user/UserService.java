@@ -45,6 +45,7 @@ public class UserService implements UserDetailsService {
         return userRepository.findByEmail(username).orElseThrow();
     }
 
+    @Transactional
     public ResponseEntity<String> signup(SignupRequest signupRequest) {
         if (userRepository.findByEmail(signupRequest.getEmail()).isPresent()) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Email is already in use!");

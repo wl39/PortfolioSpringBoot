@@ -43,4 +43,21 @@ public interface AssignmentRepository extends JpaRepository<Assignment, Long> {
             @Param("day") int day,
             Pageable pageable
     );
+
+//    @Query("""
+//    SELECT a
+//    FROM Assignment a
+//    JOIN a.student s
+//    WHERE FUNCTION('YEAR', a.targetDate) = :year
+//      AND FUNCTION('MONTH', a.targetDate) = :month
+//      AND FUNCTION('DAY', a.targetDate) = :day
+//      AND s.name = :name
+//    """)
+//    Page<Assignment> findByStudentNameAndTargetDateAndTitleAndQuestion(
+//            @Param("name") String name,
+//            @Param("year") int year,
+//            @Param("month") int month,
+//            @Param("day") int day,
+//            Pageable pageable
+//    );
 }
