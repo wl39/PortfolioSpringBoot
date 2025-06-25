@@ -47,7 +47,7 @@ public class CalendarController {
             return ResponseEntity.ok(this.calendarService.findByYearMonthAndStudent(year, month, name));
         }
 
-        if (user.getUsername().equals(name)) {
+        if (user.getUsername().equalsIgnoreCase(name)) {
             return ResponseEntity.ok(this.calendarService.findByYearMonthAndStudent(year, month, name));
         }
 

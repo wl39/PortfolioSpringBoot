@@ -41,7 +41,7 @@ public class AssignmentController {
             return ResponseEntity.ok(assignmentService.getLatestDate(name));
         }
 
-        if (user.getUsername().equals(name)) {
+        if (user.getUsername().equalsIgnoreCase(name)) {
             return ResponseEntity.ok(assignmentService.getLatestDate(name));
         }
 

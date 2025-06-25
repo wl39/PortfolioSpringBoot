@@ -32,7 +32,7 @@ public class StudentServiceSubscriptionController {
         boolean isAdmin = authentication.getAuthorities().stream()
                 .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"));
 
-        if (!isAdmin && !user.getUsername().equals(name)) return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access Denied");
+        if (!isAdmin && !user.getUsername().equalsIgnoreCase(name)) return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access Denied");
         return studentServiceSubscriptionService.getSubscriptions(name);
     }
 }
