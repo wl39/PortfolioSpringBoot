@@ -132,4 +132,11 @@ public class UserService implements UserDetailsService {
 
         return users.stream().map(u -> new ParentResponse(u.getEmail(), u.getUsername(), u.getChildren())).collect(Collectors.toList());
     }
+
+    public boolean isMyChild(String username, String name) {
+        UserEntity user = userRepository.findByUsername(username).orElseThrow(() -> new EntityNotFoundException("User not found"));
+        Student student = studentRepository.findByName(name).orElseThrow(() -> new  EntityNotFoundException("Student not found"));
+
+        return (user.getRole().equals("PARENT") && user.getChildren().contains(student));
+    }
 }

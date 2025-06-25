@@ -70,14 +70,16 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/api/v1/users/login", "/api/v1/users/signup", "/api/v1/users/refresh").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/v1/questions/student/**").hasAnyRole("ADMIN", "STUDENT", "TEACHER")
-                        .requestMatchers(HttpMethod.GET, "/api/v1/assignments/**").hasAnyRole("ADMIN", "STUDENT", "TEACHER")
-                        .requestMatchers(HttpMethod.GET, "/api/v1/calendars/**").hasAnyRole("ADMIN", "STUDENT", "TEACHER")
-                        .requestMatchers(HttpMethod.GET, "/api/v1/submissions/**").hasAnyRole("ADMIN", "STUDENT", "TEACHER")
-                        .requestMatchers(HttpMethod.POST, "/api/v1/submissions/**").hasAnyRole("ADMIN", "STUDENT", "TEACHER")
-                        .requestMatchers(HttpMethod.GET, "/api/v1/simple_math/**").hasAnyRole("ADMIN", "STUDENT", "TEACHER")
-                        .requestMatchers(HttpMethod.POST, "/api/v1/simple_math/**").hasAnyRole("ADMIN", "STUDENT", "TEACHER")
-                        .requestMatchers(HttpMethod.GET, "/api/v1/subscriptions/**").hasAnyRole("ADMIN", "STUDENT", "TEACHER")
+                        .requestMatchers(HttpMethod.GET, "/api/v1/questions/student/**").hasAnyRole("ADMIN", "STUDENT", "PARENT", "TEACHER")
+                        .requestMatchers(HttpMethod.GET, "/api/v1/assignments/**").hasAnyRole("ADMIN", "STUDENT", "PARENT", "TEACHER")
+                        .requestMatchers(HttpMethod.GET, "/api/v1/calendars/**").hasAnyRole("ADMIN", "STUDENT", "PARENT", "TEACHER")
+                        .requestMatchers(HttpMethod.GET, "/api/v1/submissions/**").hasAnyRole("ADMIN", "STUDENT", "PARENT", "TEACHER")
+                        .requestMatchers(HttpMethod.POST, "/api/v1/submissions/**").hasAnyRole("ADMIN", "STUDENT", "PARENT", "TEACHER")
+                        .requestMatchers(HttpMethod.GET, "/api/v1/simple_math/**").hasAnyRole("ADMIN", "STUDENT", "PARENT", "TEACHER")
+                        .requestMatchers(HttpMethod.POST, "/api/v1/simple_math/**").hasAnyRole("ADMIN", "STUDENT", "PARENT", "TEACHER")
+                        .requestMatchers(HttpMethod.GET, "/api/v1/subscriptions/**").hasAnyRole("ADMIN", "STUDENT", "PARENT", "TEACHER")
+                        .requestMatchers(HttpMethod.GET, "/api/v1/stats/**").hasAnyRole("ADMIN", "STUDENT", "PARENT", "TEACHER")
+
 
 
                         .requestMatchers("/api/v1/teacher", "/api/v1/calendar/**").hasAnyRole("ADMIN", "TEACHER")
