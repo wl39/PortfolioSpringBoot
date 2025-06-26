@@ -18,6 +18,7 @@ public class SubmissionQuestion {
     private String studentAnswer;
 
     private LocalDateTime submitDate;
+    private LocalDateTime targetDate;
     private Integer marked;
 
     public SubmissionQuestion(Long id, QuestionOnly question, String studentAnswer, LocalDateTime submitDate, Integer marked) {
@@ -28,7 +29,7 @@ public class SubmissionQuestion {
         this.marked = marked;
     }
 
-    public SubmissionQuestion(Long id, Question question, String studentAnswer, LocalDateTime submitDate, Integer marked) {
+    public SubmissionQuestion(Long id, Question question, String studentAnswer, LocalDateTime submitDate, LocalDateTime targetDate, Integer marked) {
         this.id = id;
         this.question = new QuestionOnly(
                 question.getId(),
@@ -44,6 +45,7 @@ public class SubmissionQuestion {
         );;
         this.studentAnswer = studentAnswer;
         this.submitDate = submitDate;
+        this.targetDate = targetDate;
         this.marked = marked;
     }
 
@@ -92,6 +94,14 @@ public class SubmissionQuestion {
 
     public void setSubmitDate(LocalDateTime submitDate) {
         this.submitDate = submitDate;
+    }
+
+    public LocalDateTime getTargetDate() {
+        return targetDate;
+    }
+
+    public void setTargetDate(LocalDateTime targetDate) {
+        this.targetDate = targetDate;
     }
 
     public Integer getMarked() {

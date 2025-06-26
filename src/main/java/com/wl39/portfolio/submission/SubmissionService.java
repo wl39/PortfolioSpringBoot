@@ -110,24 +110,24 @@ public class SubmissionService {
     public Page<SubmissionQuestion> getSubmissions(Pageable pageable, String name, LocalDate date) {
         if (date != null) {
             return submissionRepository.findByStudentNameAndDate(pageable, name, date.getYear(), date.getMonthValue(), date.getDayOfMonth()).map(submission ->
-                    new SubmissionQuestion(submission.getId(), submission.getQuestion(), submission.getStudentAnswer(), submission.getSubmitDate(), submission.getMarked())
+                    new SubmissionQuestion(submission.getId(), submission.getQuestion(), submission.getStudentAnswer(), submission.getSubmitDate(), submission.getTargetDate(), submission.getMarked())
             );
         }
 
         return submissionRepository.findByStudentName(pageable, name).map(submission ->
-                new SubmissionQuestion(submission.getId(), submission.getQuestion(), submission.getStudentAnswer(), submission.getSubmitDate(), submission.getMarked())
+                new SubmissionQuestion(submission.getId(), submission.getQuestion(), submission.getStudentAnswer(), submission.getSubmitDate(), submission.getTargetDate(), submission.getMarked())
         );
     }
 
     public Page<SubmissionQuestion> getSubmissionsToMark(Pageable pageable, String name) {
         return submissionRepository.findByStudentNameAndMarked(pageable, name, 0).map(submission ->
-                new SubmissionQuestion(submission.getId(), submission.getQuestion(), submission.getStudentAnswer(), submission.getSubmitDate(), submission.getMarked())
+                new SubmissionQuestion(submission.getId(), submission.getQuestion(), submission.getStudentAnswer(), submission.getSubmitDate(), submission.getTargetDate(), submission.getMarked())
         );
     }
 
     public Page<SubmissionQuestion> getWrongSubmissions(Pageable pageable, String name) {
         return this.submissionRepository.findByStudentNameAndMarked(pageable, name, -1).map(submission ->
-                new SubmissionQuestion(submission.getId(), submission.getQuestion(), submission.getStudentAnswer(), submission.getSubmitDate(), submission.getMarked())
+                new SubmissionQuestion(submission.getId(), submission.getQuestion(), submission.getStudentAnswer(), submission.getSubmitDate(), submission.getTargetDate(), submission.getMarked())
         );
     }
 
