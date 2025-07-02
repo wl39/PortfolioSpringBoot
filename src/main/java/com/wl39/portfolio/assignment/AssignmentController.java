@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.Collection;
+import java.util.List;
 
 @RestController
 @RequestMapping(path = "api/v1/assignments")
@@ -53,5 +54,39 @@ public class AssignmentController {
         }
 
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access Denied");
+    }
+
+    @GetMapping(path = "/count/{name}")
+    public ResponseEntity<?> getTotalCountsByName(@PathVariable String name, Authentication authentication) {
+        CustomUserPrincipal user = (CustomUserPrincipal) authentication.getPrincipal();
+        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+
+        boolean isAdmin = authorities.stream()
+                .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"));
+
+        boolean isParent = authorities.stream()
+                .anyMatch(auth -> auth.getAuthority().equals("ROLE_PARENT"));
+
+        if (isAdmin) {
+            return ResponseEntity.ok(assignmentService.getTotalCountsByName(name));
+        }
+
+        if (user.getUsername().equalsIgnoreCase(name)) {
+            return ResponseEntity.ok(assignmentService.getTotalCountsByName(name));
+        }
+
+        if (isParent) {
+            boolean isChild = userService.isMyChild(user.getUsername(), name); // 구현 필요
+            if (isChild) {
+                return ResponseEntity.ok(assignmentService.getTotalCountsByName(name));
+            }
+        }
+
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access Denied");
+    }
+
+    @GetMapping(path = "/ids/{name}")
+    ResponseEntity<?> getAllAssignmentsIDByName(@PathVariable String name) {
+        return ResponseEntity.ok(assignmentService.getAllAssignmentsIDByName(name));
     }
 }

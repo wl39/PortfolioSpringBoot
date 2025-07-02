@@ -110,6 +110,38 @@ public class SubmissionController {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access Denied");
     }
 
+    @GetMapping("/count/{name}")
+    public ResponseEntity<?> getTotalCountsByName(
+            @PathVariable String name,
+            Authentication authentication) {
+
+        CustomUserPrincipal user = (CustomUserPrincipal) authentication.getPrincipal();
+        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+
+        boolean isAdmin = authorities.stream()
+                .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"));
+
+        boolean isParent = authorities.stream()
+                .anyMatch(auth -> auth.getAuthority().equals("ROLE_PARENT"));
+
+        if (isAdmin) {
+            return ResponseEntity.ok(submissionService.getTotalCountsByName(name));
+        }
+
+        if (user.getUsername().equals(name)) {
+            return ResponseEntity.ok(submissionService.getTotalCountsByName(name));
+        }
+
+        if (isParent) {
+            boolean isChild = userService.isMyChild(user.getUsername(), name); // 구현 필요
+            if (isChild) {
+                return ResponseEntity.ok(submissionService.getTotalCountsByName(name));
+            }
+        }
+
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access Denied");
+    }
+
 
     @GetMapping("/{name}")
     public Page<SubmissionQuestion> getSubmissions(Pageable pageable, @PathVariable String name, @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {

@@ -135,8 +135,12 @@ public class UserService implements UserDetailsService {
 
     public boolean isMyChild(String username, String name) {
         UserEntity user = userRepository.findByUsername(username).orElseThrow(() -> new EntityNotFoundException("User not found"));
-        Student student = studentRepository.findByName(name).orElseThrow(() -> new  EntityNotFoundException("Student not found"));
+        Student student = studentRepository.findByName(name).orElseThrow(() -> new EntityNotFoundException("Student not found"));
 
         return (user.getRole().equals("PARENT") && user.getChildren().contains(student));
+    }
+
+    public UserResponse getFindByName(String name) {
+        return new UserResponse(userRepository.findByUsername(name).orElseThrow(() -> new EntityNotFoundException("User not found")));
     }
 }

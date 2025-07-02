@@ -23,6 +23,7 @@ public interface AssignmentRepository extends JpaRepository<Assignment, Long> {
             AND s.name = :name
             """) // WHERE MARKED -1 OR 1 OR 0
     Long getCounts(@Param("name") String name, @Param("year") int year, @Param("month") int month);
+    Long countByStudentName(String name);
     List<Assignment> findByStudentName(String name);
 
     Optional<Assignment> findTopByStudent_NameOrderByTargetDateDesc(String name);
@@ -43,6 +44,14 @@ public interface AssignmentRepository extends JpaRepository<Assignment, Long> {
             @Param("day") int day,
             Pageable pageable
     );
+
+    @Query("""
+            SELECT a.question.id
+            FROM Assignment a
+            JOIN a.student s
+            WHERE s.name = :name
+            """)
+    List<Long> findByQuestionIdsByStudentName(@Param("name") String name);
 
 //    @Query("""
 //    SELECT a

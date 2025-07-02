@@ -82,4 +82,6 @@ public interface SubmissionRepository extends JpaRepository<Submission, Long> {
 
 
     List<Submission> findByStudentName(String name);
+
+    Long countByStudentName(String name);
 }

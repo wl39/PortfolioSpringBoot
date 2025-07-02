@@ -191,4 +191,9 @@ public class UserController {
     public ResponseEntity<?> getAllUsers() {
         return ResponseEntity.ok(userService.getAllUsers());
     }
+
+    @GetMapping("/{name}")
+    public ResponseEntity<?> getUserByName(@PathVariable String name) {
+        return ResponseEntity.ok(userService.getFindByName(name));
+    }
 }

@@ -162,4 +162,8 @@ public class SubmissionService {
     public List<Submission> getAllSubmissionsByName(String name) {
         return submissionRepository.findByStudentName(name);
     }
+
+    public Long getTotalCountsByName(String name) {
+        return submissionRepository.countByStudentName(name);
+    }
 }

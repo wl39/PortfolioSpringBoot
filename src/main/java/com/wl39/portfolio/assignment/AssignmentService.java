@@ -83,4 +83,12 @@ public class AssignmentService {
                 .map(a -> a.getTargetDate().toLocalDate())
                 .orElse(null);
     }
+
+    public Long getTotalCountsByName(String name) {
+        return assignmentRepository.countByStudentName(name);
+    }
+
+    public List<Long> getAllAssignmentsIDByName(String name) {
+        return this.assignmentRepository.findByQuestionIdsByStudentName(name);
+    }
 }
