@@ -74,6 +74,7 @@ public class WebSecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/v1/assignments/**").hasAnyRole("ADMIN", "STUDENT", "PARENT", "TEACHER")
                         .requestMatchers(HttpMethod.GET, "/api/v1/calendars/**").hasAnyRole("ADMIN", "STUDENT", "PARENT", "TEACHER")
                         .requestMatchers(HttpMethod.GET, "/api/v1/submissions/**").hasAnyRole("ADMIN", "STUDENT", "PARENT", "TEACHER")
+                        .requestMatchers(HttpMethod.PATCH, "/api/v1/users/**").hasAnyRole("ADMIN", "STUDENT", "PARENT", "TEACHER")
                         .requestMatchers(HttpMethod.POST, "/api/v1/submissions/**").hasAnyRole("ADMIN", "STUDENT", "PARENT", "TEACHER")
                         .requestMatchers(HttpMethod.GET, "/api/v1/simple_math/**").hasAnyRole("ADMIN", "STUDENT", "PARENT", "TEACHER")
                         .requestMatchers(HttpMethod.POST, "/api/v1/simple_math/**").hasAnyRole("ADMIN", "STUDENT", "PARENT", "TEACHER")

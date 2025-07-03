@@ -83,7 +83,7 @@ public class UserService implements UserDetailsService {
     }
 
     public List<UserResponse> getAllUsers() {
-        return userRepository.findAll().stream().map((user -> new UserResponse(user.getId(), user.getEmail(), user.getUsername(), user.getRole(), user.getStudent()))).collect(Collectors.toList());
+        return userRepository.findAll().stream().map((user -> new UserResponse(user.getId(), user.getEmail(), user.getUsername(), user.getRole(), user.getImage(), user.getStudent()))).collect(Collectors.toList());
     }
 
     @Transactional
