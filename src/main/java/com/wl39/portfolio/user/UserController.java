@@ -74,7 +74,12 @@ public class UserController {
             accessCookie.setHttpOnly(true);
             accessCookie.setSecure(!isProd);
             accessCookie.setPath("/");
+            if (isProd)accessCookie.setDomain(".91b.co.uk");
             accessCookie.setMaxAge(60 * 60); // 1 hour
+
+            if (isProd)response.setHeader("Set-Cookie",
+                    String.format("token=%s; Max-Age=%d; Path=/; Domain=.91b.co.uk; HttpOnly; Secure; SameSite=None",
+                            accessToken, 60 * 60));
 
             // refresh token
             Cookie refreshCookie = new Cookie("refreshToken", refreshToken);
@@ -125,7 +130,12 @@ public class UserController {
         accessCookie.setHttpOnly(true);
         accessCookie.setSecure(!isProd);
         accessCookie.setPath("/");
+        if (isProd) accessCookie.setDomain(".91b.co.uk");
         accessCookie.setMaxAge(60 * 60); // 1시간
+
+        if (isProd) response.setHeader("Set-Cookie",
+                String.format("token=%s; Max-Age=%d; Path=/; Domain=.91b.co.uk; HttpOnly; Secure; SameSite=None",
+                        newAccessToken, 60 * 60));
 
         response.addCookie(accessCookie);
 
