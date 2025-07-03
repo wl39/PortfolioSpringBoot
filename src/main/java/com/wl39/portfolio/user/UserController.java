@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -14,6 +15,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.Duration;
 import java.util.List;
 
 @RestController
@@ -69,37 +71,51 @@ public class UserController {
             String accessToken = jwtProvider.generateToken(user.getEmail(), user.getUsername(), user.getRole());
             String refreshToken = jwtProvider.generateRefreshToken(user.getEmail());
 
+            // 공통 ResponseCookie 설정 빌더
+            ResponseCookie.ResponseCookieBuilder accessBuilder = ResponseCookie.from("token", accessToken)
+                    .httpOnly(true)
+                    .path("/")
+                    .maxAge(Duration.ofHours(1));
+
+            ResponseCookie.ResponseCookieBuilder refreshBuilder = ResponseCookie.from("refreshToken", refreshToken)
+                    .httpOnly(true)
+                    .path("/")
+                    .maxAge(Duration.ofDays(7));
+
             if (isProd) {
-                response.setHeader("Set-Cookie",
-                        String.format("token=%s; Max-Age=%d; Path=/; Domain=.91b.co.uk; HttpOnly; Secure; SameSite=None",
-                                accessToken, 60 * 60));
+                accessBuilder
+                        .secure(true)
+                        .sameSite("None")
+                        .domain(".91b.co.uk");
 
-                response.addHeader("Set-Cookie",
-                        String.format("refreshToken=%s; Max-Age=%d; Path=/; Domain=.91b.co.uk; HttpOnly; Secure; SameSite=None",
-                                refreshToken, 7 * 24 * 60 * 60));
+                refreshBuilder
+                        .secure(true)
+                        .sameSite("None")
+                        .domain(".91b.co.uk");
             } else {
-                // 개발 환경에서는 기본 쿠키 방식으로 설정해도 괜찮음
-                Cookie accessCookie = new Cookie("token", accessToken);
-                accessCookie.setHttpOnly(true);
-                accessCookie.setSecure(false); // 개발 환경이므로 false
-                accessCookie.setPath("/");
-                accessCookie.setMaxAge(60 * 60);
-                response.addCookie(accessCookie);
+                accessBuilder
+                        .secure(false)
+                        .sameSite("Lax");
 
-                Cookie refreshCookie = new Cookie("refreshToken", refreshToken);
-                refreshCookie.setHttpOnly(true);
-                refreshCookie.setSecure(false);
-                refreshCookie.setPath("/");
-                refreshCookie.setMaxAge(7 * 24 * 60 * 60);
-                response.addCookie(refreshCookie);
+                refreshBuilder
+                        .secure(false)
+                        .sameSite("Lax");
             }
 
+            // 최종 쿠키 빌드 및 설정
+            ResponseCookie accessCookie = accessBuilder.build();
+            ResponseCookie refreshCookie = refreshBuilder.build();
+
+            response.addHeader("Set-Cookie", accessCookie.toString());
+            response.addHeader("Set-Cookie", refreshCookie.toString());
 
             return ResponseEntity.ok(user.getUsername());
+
         } catch (BadCredentialsException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
         }
     }
+
 
     @PostMapping("/refresh")
     public ResponseEntity<?> refreshToken(HttpServletRequest request, HttpServletResponse response) {
@@ -128,23 +144,32 @@ public class UserController {
                 user.getEmail(), user.getUsername(), user.getRole()
         );
 
+        ResponseCookie tokenCookie;
+
         if (isProd) {
-            // 프로덕션 환경: SameSite=None, Secure, Domain 설정 수동 처리
-            response.setHeader("Set-Cookie",
-                    String.format("token=%s; Max-Age=%d; Path=/; Domain=.91b.co.uk; HttpOnly; Secure; SameSite=None",
-                            newAccessToken, 60 * 60));
+            tokenCookie = ResponseCookie.from("token", newAccessToken)
+                    .httpOnly(true)
+                    .secure(true)
+                    .sameSite("None")
+                    .domain(".91b.co.uk")
+                    .path("/")
+                    .maxAge(Duration.ofHours(1))
+                    .build();
         } else {
-            // 개발 환경: 일반 Cookie 객체 사용
-            Cookie accessCookie = new Cookie("token", newAccessToken);
-            accessCookie.setHttpOnly(true);
-            accessCookie.setSecure(false); // 개발 환경이므로 false
-            accessCookie.setPath("/");
-            accessCookie.setMaxAge(60 * 60); // 1시간
-            response.addCookie(accessCookie);
+            tokenCookie = ResponseCookie.from("token", newAccessToken)
+                    .httpOnly(true)
+                    .secure(false)
+                    .sameSite("Lax") // 개발 환경에서는 기본값
+                    .path("/")
+                    .maxAge(Duration.ofHours(1))
+                    .build();
         }
+
+        response.addHeader("Set-Cookie", tokenCookie.toString());
 
         return ResponseEntity.ok(user.getUsername());
     }
+
 
 
     @PostMapping("/signup")
