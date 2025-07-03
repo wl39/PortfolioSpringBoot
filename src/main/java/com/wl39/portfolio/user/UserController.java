@@ -69,28 +69,31 @@ public class UserController {
             String accessToken = jwtProvider.generateToken(user.getEmail(), user.getUsername(), user.getRole());
             String refreshToken = jwtProvider.generateRefreshToken(user.getEmail());
 
-            // access token
-            Cookie accessCookie = new Cookie("token", accessToken);
-            accessCookie.setHttpOnly(true);
-            accessCookie.setSecure(!isProd);
-            accessCookie.setPath("/");
-            if (isProd)accessCookie.setDomain(".91b.co.uk");
-            accessCookie.setMaxAge(60 * 60); // 1 hour
+            if (isProd) {
+                response.setHeader("Set-Cookie",
+                        String.format("token=%s; Max-Age=%d; Path=/; Domain=.91b.co.uk; HttpOnly; Secure; SameSite=None",
+                                accessToken, 60 * 60));
 
-            if (isProd)response.setHeader("Set-Cookie",
-                    String.format("token=%s; Max-Age=%d; Path=/; Domain=.91b.co.uk; HttpOnly; Secure; SameSite=None",
-                            accessToken, 60 * 60));
+                response.addHeader("Set-Cookie",
+                        String.format("refreshToken=%s; Max-Age=%d; Path=/; Domain=.91b.co.uk; HttpOnly; Secure; SameSite=None",
+                                refreshToken, 7 * 24 * 60 * 60));
+            } else {
+                // 개발 환경에서는 기본 쿠키 방식으로 설정해도 괜찮음
+                Cookie accessCookie = new Cookie("token", accessToken);
+                accessCookie.setHttpOnly(true);
+                accessCookie.setSecure(false); // 개발 환경이므로 false
+                accessCookie.setPath("/");
+                accessCookie.setMaxAge(60 * 60);
+                response.addCookie(accessCookie);
 
-            // refresh token
-            Cookie refreshCookie = new Cookie("refreshToken", refreshToken);
-            refreshCookie.setHttpOnly(true);
-            refreshCookie.setSecure(!isProd);
-            refreshCookie.setPath("/");
-            refreshCookie.setMaxAge(7 * 24 * 60 * 60); // 7 days
+                Cookie refreshCookie = new Cookie("refreshToken", refreshToken);
+                refreshCookie.setHttpOnly(true);
+                refreshCookie.setSecure(false);
+                refreshCookie.setPath("/");
+                refreshCookie.setMaxAge(7 * 24 * 60 * 60);
+                response.addCookie(refreshCookie);
+            }
 
-            // Add cookies
-            response.addCookie(accessCookie);
-            response.addCookie(refreshCookie);
 
             return ResponseEntity.ok(user.getUsername());
         } catch (BadCredentialsException e) {
@@ -115,7 +118,6 @@ public class UserController {
         }
 
         String email = jwtProvider.getEmailFromJWT(refreshToken);
-
         UserEntity user = userService.findByEmail(email);
         if (user == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not found");
@@ -126,21 +128,24 @@ public class UserController {
                 user.getEmail(), user.getUsername(), user.getRole()
         );
 
-        Cookie accessCookie = new Cookie("token", newAccessToken);
-        accessCookie.setHttpOnly(true);
-        accessCookie.setSecure(!isProd);
-        accessCookie.setPath("/");
-        if (isProd) accessCookie.setDomain(".91b.co.uk");
-        accessCookie.setMaxAge(60 * 60); // 1시간
-
-        if (isProd) response.setHeader("Set-Cookie",
-                String.format("token=%s; Max-Age=%d; Path=/; Domain=.91b.co.uk; HttpOnly; Secure; SameSite=None",
-                        newAccessToken, 60 * 60));
-
-        response.addCookie(accessCookie);
+        if (isProd) {
+            // 프로덕션 환경: SameSite=None, Secure, Domain 설정 수동 처리
+            response.setHeader("Set-Cookie",
+                    String.format("token=%s; Max-Age=%d; Path=/; Domain=.91b.co.uk; HttpOnly; Secure; SameSite=None",
+                            newAccessToken, 60 * 60));
+        } else {
+            // 개발 환경: 일반 Cookie 객체 사용
+            Cookie accessCookie = new Cookie("token", newAccessToken);
+            accessCookie.setHttpOnly(true);
+            accessCookie.setSecure(false); // 개발 환경이므로 false
+            accessCookie.setPath("/");
+            accessCookie.setMaxAge(60 * 60); // 1시간
+            response.addCookie(accessCookie);
+        }
 
         return ResponseEntity.ok(user.getUsername());
     }
+
 
     @PostMapping("/signup")
     public ResponseEntity<String> signup(@RequestBody SignupRequest signupRequest) {
