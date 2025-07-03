@@ -36,25 +36,47 @@ public class UserController {
     }
     @PostMapping("/logout")
     public ResponseEntity<?> logout(HttpServletResponse response) {
-        // Delete accessToken cookie
-        Cookie accessTokenCookie = new Cookie("accessToken", null);
-        accessTokenCookie.setPath("/");
-        accessTokenCookie.setHttpOnly(true);
-        accessTokenCookie.setSecure(true);
-        accessTokenCookie.setMaxAge(0);
+        // accessToken 삭제 쿠키
+        ResponseCookie.ResponseCookieBuilder accessBuilder = ResponseCookie.from("token", "")
+                .path("/")
+                .httpOnly(true)
+                .maxAge(0); // 즉시 만료
 
-        // Delete refreshToken cookie
-        Cookie refreshTokenCookie = new Cookie("refreshToken", null);
-        refreshTokenCookie.setPath("/");
-        refreshTokenCookie.setHttpOnly(true);
-        refreshTokenCookie.setSecure(true);
-        refreshTokenCookie.setMaxAge(0);
+        // refreshToken 삭제 쿠키
+        ResponseCookie.ResponseCookieBuilder refreshBuilder = ResponseCookie.from("refreshToken", "")
+                .path("/")
+                .httpOnly(true)
+                .maxAge(0); // 즉시 만료
 
-        response.addCookie(accessTokenCookie);
-        response.addCookie(refreshTokenCookie);
+        if (isProd) {
+            accessBuilder
+                    .secure(true)
+                    .sameSite("None")
+                    .domain(".91b.co.uk");
+
+            refreshBuilder
+                    .secure(true)
+                    .sameSite("None")
+                    .domain(".91b.co.uk");
+        } else {
+            accessBuilder
+                    .secure(false)
+                    .sameSite("Lax");
+
+            refreshBuilder
+                    .secure(false)
+                    .sameSite("Lax");
+        }
+
+        ResponseCookie accessCookie = accessBuilder.build();
+        ResponseCookie refreshCookie = refreshBuilder.build();
+
+        response.addHeader("Set-Cookie", accessCookie.toString());
+        response.addHeader("Set-Cookie", refreshCookie.toString());
 
         return ResponseEntity.ok("Logged out");
     }
+
 
 
     @PostMapping("/login")
