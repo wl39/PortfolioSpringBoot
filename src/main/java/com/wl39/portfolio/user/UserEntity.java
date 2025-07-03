@@ -32,6 +32,9 @@ public class UserEntity {
     @Column(nullable = false)
     private String role = "STUDENT";
 
+    @Column(nullable = false)
+    private String image = "http://img.91b.co.uk/9ae9d226-9491-468c-97ae-3e55d3a0c103.png";
+
     @OneToOne
     @JoinColumn(name = "student_id", nullable = false)
     private Student student;

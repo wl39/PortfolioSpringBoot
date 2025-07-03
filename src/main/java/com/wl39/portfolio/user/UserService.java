@@ -143,4 +143,13 @@ public class UserService implements UserDetailsService {
     public UserResponse getFindByName(String name) {
         return new UserResponse(userRepository.findByUsername(name).orElseThrow(() -> new EntityNotFoundException("User not found")));
     }
+
+    public Object changeImage(UserImagePatch userImagePatch) {
+        UserEntity userEntity = userRepository.findByUsername(userImagePatch.getUsername())
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+
+        userEntity.setImage(userImagePatch.getImageUrl());
+
+        return new UserResponse(userRepository.save(userEntity));
+    }
 }

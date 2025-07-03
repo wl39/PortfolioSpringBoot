@@ -187,12 +187,17 @@ public class UserController {
     public ResponseEntity<?> modify(@RequestBody UserPatch userPatch) {
         return ResponseEntity.ok(userService.modifyUser(userPatch));
     }
+
+    @PatchMapping(path = "/image")
+    public ResponseEntity<?> changeImage(@RequestBody UserImagePatch imageUrl) {
+        return ResponseEntity.ok(userService.changeImage(imageUrl));
+    }
     @GetMapping
     public ResponseEntity<?> getAllUsers() {
         return ResponseEntity.ok(userService.getAllUsers());
     }
 
-    @GetMapping("/{name}")
+    @GetMapping(path = "/{name}")
     public ResponseEntity<?> getUserByName(@PathVariable String name) {
         return ResponseEntity.ok(userService.getFindByName(name));
     }
