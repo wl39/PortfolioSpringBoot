@@ -57,7 +57,7 @@ public class WebSecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, OAuth2AuthenticationSuccessHandler successHandler) throws Exception {
         JWTAuthenticationFilter jwtAuthenticationFilter = new JWTAuthenticationFilter(jwtProvider);
 
         return http
@@ -69,11 +69,13 @@ public class WebSecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        .requestMatchers("/api/v1/users/login", "/api/v1/users/signup", "/api/v1/users/refresh", "/api/v1/users/logout").permitAll()
+                        .requestMatchers("/api/v1/users/login", "/api/v1/users/signup", "/api/v1/users/oauth/register","/api/v1/users/refresh", "/api/v1/users/logout").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/questions/student/**").hasAnyRole("ADMIN", "STUDENT", "PARENT", "TEACHER")
                         .requestMatchers(HttpMethod.GET, "/api/v1/assignments/**").hasAnyRole("ADMIN", "STUDENT", "PARENT", "TEACHER")
                         .requestMatchers(HttpMethod.GET, "/api/v1/calendars/**").hasAnyRole("ADMIN", "STUDENT", "PARENT", "TEACHER")
                         .requestMatchers(HttpMethod.GET, "/api/v1/submissions/**").hasAnyRole("ADMIN", "STUDENT", "PARENT", "TEACHER")
+                        .requestMatchers(HttpMethod.PATCH, "/api/v1/users/**").hasAnyRole("ADMIN", "STUDENT", "PARENT", "TEACHER")
+                        .requestMatchers(HttpMethod.GET, "/api/v1/users/**").hasAnyRole("ADMIN", "STUDENT", "PARENT", "TEACHER")
                         .requestMatchers(HttpMethod.POST, "/api/v1/submissions/**").hasAnyRole("ADMIN", "STUDENT", "PARENT", "TEACHER")
                         .requestMatchers(HttpMethod.GET, "/api/v1/simple_math/**").hasAnyRole("ADMIN", "STUDENT", "PARENT", "TEACHER")
                         .requestMatchers(HttpMethod.POST, "/api/v1/simple_math/**").hasAnyRole("ADMIN", "STUDENT", "PARENT", "TEACHER")
@@ -93,6 +95,7 @@ public class WebSecurityConfig {
 
                         .requestMatchers("/api/v1/**").hasRole("ADMIN")
                         .anyRequest().authenticated())
+                .oauth2Login(oauth2 -> oauth2.successHandler(successHandler))
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }

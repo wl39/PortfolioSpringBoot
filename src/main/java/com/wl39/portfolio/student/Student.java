@@ -6,6 +6,7 @@ import com.wl39.portfolio.calendar.Calendar;
 import com.wl39.portfolio.stats.StudentTopicStats;
 import com.wl39.portfolio.submission.Submission;
 import com.wl39.portfolio.subscription.StudentServiceSubscription;
+import com.wl39.portfolio.teacher.Teacher;
 import com.wl39.portfolio.user.UserEntity;
 import jakarta.persistence.*;
 
@@ -43,6 +44,11 @@ public class Student {
 
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<StudentServiceSubscription> subscriptions = new ArrayList<>();
+
+    @ManyToOne
+    @JoinColumn(name = "teacher_id")
+    @JsonIgnore
+    private Teacher teacher;
 
     public Student() {}
 
@@ -120,5 +126,13 @@ public class Student {
 
     public void setTopicStats(Set<StudentTopicStats> topicStats) {
         this.topicStats = topicStats;
+    }
+
+    public Teacher getTeacher() {
+        return teacher;
+    }
+
+    public void setTeacher(Teacher teacher) {
+        this.teacher = teacher;
     }
 }

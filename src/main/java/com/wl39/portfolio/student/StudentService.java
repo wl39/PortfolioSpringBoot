@@ -2,6 +2,7 @@ package com.wl39.portfolio.student;
 
 import com.wl39.portfolio.assignment.AssignmentRepository;
 import com.wl39.portfolio.submission.SubmissionRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -31,10 +32,7 @@ public class StudentService {
     }
 
     public Student get(String name) {
-        return studentRepository.findByName(name).orElseGet(() -> {
-            Student s = new Student(name);
-            return studentRepository.save(s);
-        });
+        return studentRepository.findByName(name).orElseThrow(() -> new EntityNotFoundException("Student not found."));
     }
 
     public List<Student> get() {

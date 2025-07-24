@@ -16,13 +16,15 @@ public class UserResponse {
     private String email; // 로그인용 이메일
     private String username;
     private String role;
+    private String imageURL;
     private Set<String> services = new HashSet<>();
 
-    UserResponse(Long id, String email, String username, String role, Student student) {
+    UserResponse(Long id, String email, String username, String role, String imageURL, Student student) {
         this.id = id;
         this.email = email;
         this.username = username;
         this.role = role;
+        this.imageURL = imageURL;
 
         student.getSubscriptions().forEach(value -> {
             services.add(value.getService().getName());
@@ -34,6 +36,7 @@ public class UserResponse {
         this.email = userEntity.getEmail();
         this.username = userEntity.getUsername();
         this.role = userEntity.getRole();
+        this.imageURL = userEntity.getImage();
 
         userEntity.getStudent().getSubscriptions().forEach(value -> services.add(value.getService().getName()));
     }

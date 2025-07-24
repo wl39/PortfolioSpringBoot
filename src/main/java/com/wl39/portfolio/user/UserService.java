@@ -71,6 +71,31 @@ public class UserService implements UserDetailsService {
         return ResponseEntity.ok("Signup successful!");
     }
 
+    @Transactional
+    public ResponseEntity<String> signup(String email, String username) {
+        if (userRepository.findByEmail(email).isPresent()) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Email is already in use!");
+        }
+
+        // 1. 유니크한 사용자 이름 생성
+        String newUsername = generateUniqueUsername(username);
+
+        // 2. Student 생성 및 저장
+        Student student = new Student(newUsername);
+        studentRepository.save(student);
+
+        // 3. UserEntity 생성 및 연결
+        UserEntity user = new UserEntity();
+        user.setUsername(newUsername); // 유니크 이름 사용
+        user.setEmail(email);
+        user.setPassword(null);
+        user.setStudent(student); //
+
+        userRepository.save(user);
+
+        return ResponseEntity.ok("Signup successful!");
+    }
+
     private String generateUniqueUsername(String baseUsername) {
         String username = baseUsername;
 
@@ -83,7 +108,7 @@ public class UserService implements UserDetailsService {
     }
 
     public List<UserResponse> getAllUsers() {
-        return userRepository.findAll().stream().map((user -> new UserResponse(user.getId(), user.getEmail(), user.getUsername(), user.getRole(), user.getStudent()))).collect(Collectors.toList());
+        return userRepository.findAll().stream().map((user -> new UserResponse(user.getId(), user.getEmail(), user.getUsername(), user.getRole(), user.getImage(), user.getStudent()))).collect(Collectors.toList());
     }
 
     @Transactional

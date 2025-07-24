@@ -7,8 +7,10 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class JWTProvider {
@@ -21,15 +23,33 @@ public class JWTProvider {
         return Algorithm.HMAC512(secretKey);
     }
 
-    public String generateToken(String email, String username, String role) {
+    public String generateToken(String email, String username, String rolesStr) {
+        // 1. "ADMIN,TEACHER" → ["ROLE_ADMIN", "ROLE_TEACHER"]
+        List<String> roles = Arrays.stream(rolesStr.split(","))
+                .map(String::trim)
+                .map(role -> "ROLE_" + role)
+                .collect(Collectors.toList());
+
         return JWT.create()
                 .withSubject(email)
                 .withClaim("username", username)
-                .withClaim("roles", List.of("ROLE_" + role))
+                .withClaim("roles", roles)
                 .withIssuedAt(new Date())
                 .withExpiresAt(new Date(System.currentTimeMillis() + expirationMs))
                 .sign(getAlgorithm());
     }
+
+    public String issueRegisterToken(String email, String provider, String username) {
+        return JWT.create()
+                .withSubject("oauth-register")
+                .withClaim("email", email)
+                .withClaim("provider", provider)
+                .withClaim("username", username)
+                .withIssuedAt(new Date())
+                .withExpiresAt(new Date(System.currentTimeMillis() + 5 * 60 * 1000)) // 5분
+                .sign(getAlgorithm());
+    }
+
 
 
     public String generateRefreshToken(String email) {
@@ -46,6 +66,14 @@ public class JWTProvider {
             return true;
         } catch (JWTVerificationException e) {
             return false;
+        }
+    }
+
+    public DecodedJWT verifyToken(String token) {
+        try {
+            return JWT.require(getAlgorithm()).build().verify(token);
+        } catch (JWTVerificationException e) {
+            return null;
         }
     }
 

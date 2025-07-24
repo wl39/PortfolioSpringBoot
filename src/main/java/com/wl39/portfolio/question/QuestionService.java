@@ -1,8 +1,10 @@
 package com.wl39.portfolio.question;
 
+import com.wl39.portfolio.PostTransactionTaskScheduler;
 import com.wl39.portfolio.assignment.Assignment;
 import com.wl39.portfolio.calendar.CalendarService;
 import com.wl39.portfolio.candidate.Candidate;
+import com.wl39.portfolio.stats.StudentTopicStatsService;
 import com.wl39.portfolio.student.Student;
 import com.wl39.portfolio.student.StudentService;
 import com.wl39.portfolio.topic.Topic;
@@ -27,7 +29,7 @@ public class QuestionService {
     private final StudentService studentService;
     private final CalendarService calendarService;
     private final TopicRepository topicRepository;
-
+    private final StudentTopicStatsService studentTopicStatsService;
 
     @Transactional
     public Long postQuestion(QuestionCreateRequest questionCreateRequest) {
@@ -279,7 +281,6 @@ public class QuestionService {
                 }
 
 
-
                 questions.add(question);
             }
         } catch (NoSuchElementException e) {
@@ -361,4 +362,22 @@ public class QuestionService {
                 param.getTitle(),
                 param.getTopics()
         );
-    }}
+    }
+
+    @Transactional
+    public void deleteQuestion(Long questionId) {
+        Set<String> students = new HashSet<>();
+
+        Question question = questionRepository.findById(questionId).orElseThrow(() -> new EntityNotFoundException("Question not found"));
+
+        students.addAll(question.getSubmissions().stream().map(submission -> submission.getStudent().getName()).toList());
+        students.addAll(question.getAssignments().stream().map(assignment -> assignment.getStudent().getName()).toList());
+
+        questionRepository.deleteById(questionId);
+
+        for (String student : students) {
+            calendarService.reloadCalendars(student);
+            studentTopicStatsService.reloadStatsForStudent(student);
+        }
+    }
+}
